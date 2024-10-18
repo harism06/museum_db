@@ -1,0 +1,14 @@
+body,
+html {
+  overflow-x: hidden;
+}
+
+/* Navbar logo size */
+#navbar-logo {
+  height: 65px;
+}
+
+/* Home Section Styles */
+#home {
+  position: relative;
+}
