@@ -2,29 +2,10 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const port = 3000;
+var connection = require("./database");
 
 const server = http.createServer(function (req, res) {
-    if (req.url === "/") {
-        // Redirect to /home/home.html
-        res.writeHead(302, {
-            'Location': '/home/home.html'
-        });
-        res.end();
-    } else if (req.url === "/home/home.html") {
-        // Serve the home.html file
-        const filePath = path.join(__dirname, 'home', 'home.html');
-        fs.readFile(filePath, (err, data) => {
-            if (err) {
-                res.writeHead(404, { 'Content-Type': 'text/html' });
-                res.write('<h1>404 Not Found</h1>');
-                res.end();
-            } else {
-                res.writeHead(200, { 'Content-Type': 'text/html' });
-                res.write(data);
-                res.end();
-            }
-        });
-    } else if (req.url.startsWith('/images/')) {
+    if (req.url.startsWith('/images/')) {
         // Serve static files (images, CSS, JS)
         const filePath = path.join(__dirname, req.url);
         const extname = path.extname(filePath);
@@ -69,6 +50,20 @@ const server = http.createServer(function (req, res) {
                 res.end();
             }
         });
+    } else if (req.url === "/") {
+        // Serve the home.html file
+        const filePath = path.join(__dirname, 'home', 'home.html');
+        fs.readFile(filePath, (err, data) => {
+            if (err) {
+                res.writeHead(404, { 'Content-Type': 'text/html' });
+                res.write('<h1>404 Not Found</h1>');
+                res.end();
+            } else {
+                res.writeHead(200, { 'Content-Type': 'text/html' });
+                res.write(data);
+                res.end();
+            }
+        });
     } else {
         res.writeHead(404, { 'Content-Type': 'text/html' });
         res.write('<h1>404 Not Found</h1>');
@@ -78,4 +73,7 @@ const server = http.createServer(function (req, res) {
 
 server.listen(port, () => {
     console.log(`Server running on port ${port}`);
+    connection.connect(function() {
+        console.log('Database Connected!');
+    })
 });
