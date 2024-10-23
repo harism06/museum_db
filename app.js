@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const port = 3000;
 var connection = require("./database");
+var mysql = require("mysql")
 
 const server = http.createServer(function (req, res) {
     if (req.url.startsWith('/images/')) {
@@ -73,7 +74,10 @@ const server = http.createServer(function (req, res) {
 
 server.listen(port, () => {
     console.log(`Server running on port ${port}`);
-    connection.connect(function() {
-        console.log('Database Connected!');
+    connection.connect((err) => {
+        if (err) {
+            console.error(err);
+        }
+        console.log('Connected!')
     })
 });
