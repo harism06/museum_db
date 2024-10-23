@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const port = 3000;
 var connection = require("./database");
-var mysql = require("mysql")
+var mysql = require("mysql2")
 
 const server = http.createServer(function (req, res) {
     if (req.url.startsWith('/images/')) {
@@ -74,10 +74,13 @@ const server = http.createServer(function (req, res) {
 
 server.listen(port, () => {
     console.log(`Server running on port ${port}`);
-    connection.connect((err) => {
+
+    connection.connect(function(err) {
         if (err) {
-            console.error(err);
+            console.error('Error connecting to the database:', err.stack);
+            return;
         }
-        console.log('Connected!')
-    })
+        console.log('Database connected as id ' + connection.threadId);
+    });
+    
 });
