@@ -43,99 +43,213 @@
             <li><a href="" class="scroll-link">Artists</a></li>
             <li><a href="" class="scroll-link">Events</a></li>
             <li><a href="" class="scroll-link">Exhibitions</a></li>
-            <li><a href="" class="scroll-link">Membership</a></li>
-            <li><a href="" class="scroll-link">Visitor Info</a></li>
-            <li><a href="#login-modal" class="scroll-link" onclick="openModal()">Login</a></li>
+            <li>
+              <a href="#login-modal" class="scroll-link" onclick="openModal()"
+                >Membership</a
+              >
+            </li>
+            <li>
+              <a href="#login-modal" class="scroll-link" onclick="openModal()"
+                >Visitor Info</a
+              >
+            </li>
+            <li>
+              <a href="#login-modal" class="scroll-link" onclick="openModal()"
+                >Login</a
+              >
+            </li>
           </ul>
         </div>
         <a href="" class="btn btn-lg btn-ghost scroll-link"
-          ><img src="../images/logo.png" id="navbar-logo" class="w-16 h-16"
-        /><span>Museum of Fine Arts</span></a>
+          ><img
+            src="../images/logo.png"
+            id="navbar-logo"
+            class="w-16 h-16"
+          /><span>Museum of Fine Arts</span></a
+        >
       </div>
       <div class="navbar-center hidden lg:flex">
         <ul class="menu menu-horizontal px-1">
           <li><a href="" class="text-xl scroll-link">Artists</a></li>
           <li><a href="" class="text-xl scroll-link">Events</a></li>
           <li><a href="" class="text-xl scroll-link">Exhibitions</a></li>
-          <li><a href="" class="text-xl scroll-link">Membership</a></li>
-          <li><a href="" class="text-xl scroll-link">Visitor Info</a></li>
-          <li><a href="#login-modal" class="text-xl scroll-link" onclick="openModal()">Login</a></li>
+          <li>
+            <a
+              href="#login-modal"
+              class="text-xl scroll-link"
+              onclick="openModal()"
+              >Membership</a
+            >
+          </li>
+          <li>
+            <a
+              href="#login-modal"
+              class="text-xl scroll-link"
+              onclick="openModal()"
+              >Visitor Info</a
+            >
+          </li>
+          <li>
+            <a
+              href="#login-modal"
+              class="text-xl scroll-link"
+              onclick="openModal()"
+              >Login</a
+            >
+          </li>
         </ul>
       </div>
       <div class="navbar-end"></div>
     </div>
 
-    <div id="login-modal" class="modal hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-70 z-50 flex items-center justify-center">
+    <div
+      id="login-modal"
+      class="modal hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-70 z-50 flex items-center justify-center"
+    >
       <div class="modal-box max-w-lg w-full bg-gray-800 p-6 rounded-md">
         <div class="modal-header flex justify-between items-center">
           <h2 id="modal-title" class="text-2xl font-semibold">Login</h2>
-          <button class="btn btn-sm btn-circle bg-gray-700 text-white" onclick="closeModal()">✕</button>
+          <button
+            class="btn btn-sm btn-circle bg-gray-700 text-white"
+            onclick="closeModal()"
+          >
+            ✕
+          </button>
         </div>
         <div class="modal-body mt-4">
           <!-- Login Form -->
           <form id="login-form" class="space-y-4">
             <div>
               <label for="email" class="block text-sm font-medium">Email</label>
-              <input type="email" id="email" name="email" class="input input-bordered w-full bg-gray-700 text-white" required />
+              <input
+                type="email"
+                id="email"
+                name="email"
+                class="input input-bordered w-full bg-gray-700 text-white"
+                required
+              />
             </div>
             <div>
-              <label for="password" class="block text-sm font-medium">Password</label>
-              <input type="password" id="password" name="password" class="input input-bordered w-full bg-gray-700 text-white" required />
+              <label for="password" class="block text-sm font-medium"
+                >Password</label
+              >
+              <input
+                type="password"
+                id="password"
+                name="password"
+                class="input input-bordered w-full bg-gray-700 text-white"
+                required
+              />
             </div>
             <div class="modal-action">
-              <button type="submit" class="btn btn-primary w-full">Login</button>
+              <button type="submit" class="btn btn-primary w-full">
+                Login
+              </button>
             </div>
           </form>
           <div class="divider" id="form-divider">OR</div>
-          <button id="toggle-register-button" class="btn btn-outline w-full text-white border-white" onclick="showRegisterForm()">Register</button>
+          <button
+            id="toggle-register-button"
+            class="btn btn-outline w-full text-white border-white"
+            onclick="showRegisterForm()"
+          >
+            Register
+          </button>
         </div>
-    
+
         <!-- Register Form -->
         <div id="register-form" class="hidden mt-4">
           <form class="space-y-4 mt-4">
             <div>
               <label for="name" class="block text-sm font-medium">Name</label>
-              <input type="text" id="name" name="name" class="input input-bordered w-full bg-gray-700 text-white" required />
+              <input
+                type="text"
+                id="name"
+                name="name"
+                class="input input-bordered w-full bg-gray-700 text-white"
+                required
+              />
             </div>
             <div>
               <label for="age" class="block text-sm font-medium">Age</label>
-              <input type="number" id="age" name="age" class="input input-bordered w-full bg-gray-700 text-white" required />
+              <input
+                type="number"
+                id="age"
+                name="age"
+                class="input input-bordered w-full bg-gray-700 text-white"
+                required
+              />
             </div>
             <div>
-              <label for="birthdate" class="block text-sm font-medium">Birthdate</label>
-              <input type="date" id="birthdate" name="birthdate" class="input input-bordered w-full bg-gray-700 text-white" required />
+              <label for="birthdate" class="block text-sm font-medium"
+                >Birthdate</label
+              >
+              <input
+                type="date"
+                id="birthdate"
+                name="birthdate"
+                class="input input-bordered w-full bg-gray-700 text-white"
+                required
+              />
             </div>
             <div>
-              <label for="phone" class="block text-sm font-medium">Phone Number</label>
-              <input type="tel" id="phone" name="phone" class="input input-bordered w-full bg-gray-700 text-white" required />
+              <label for="phone" class="block text-sm font-medium"
+                >Phone Number</label
+              >
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                class="input input-bordered w-full bg-gray-700 text-white"
+                required
+              />
             </div>
             <div>
               <label for="email" class="block text-sm font-medium">Email</label>
-              <input type="email" id="reg-email" name="email" class="input input-bordered w-full bg-gray-700 text-white" required />
+              <input
+                type="email"
+                id="reg-email"
+                name="email"
+                class="input input-bordered w-full bg-gray-700 text-white"
+                required
+              />
             </div>
             <div>
-              <label for="reg-password" class="block text-sm font-medium">Password</label>
-              <input type="password" id="reg-password" name="password" class="input input-bordered w-full bg-gray-700 text-white" required />
+              <label for="reg-password" class="block text-sm font-medium"
+                >Password</label
+              >
+              <input
+                type="password"
+                id="reg-password"
+                name="password"
+                class="input input-bordered w-full bg-gray-700 text-white"
+                required
+              />
             </div>
             <div class="modal-action">
-              <button type="submit" class="btn btn-primary w-full">Register</button>
+              <button type="submit" class="btn btn-primary w-full">
+                Register
+              </button>
             </div>
           </form>
           <div class="divider" id="register-login-divider">OR</div>
-          <button id="toggle-login-button" class="btn btn-outline w-full text-white border-white" onclick="showLoginForm()">Login</button>
+          <button
+            id="toggle-login-button"
+            class="btn btn-outline w-full text-white border-white"
+            onclick="showLoginForm()"
+          >
+            Login
+          </button>
         </div>
       </div>
     </div>
-    
 
     <!-- Home Section -->
     <section id="home">
       <!-- Landing Page -->
       <div
         class="relative h-screen flex items-center justify-center bg-cover bg-center"
-        style="
-          background-image: url('../images/home_bckgrnd_img.jpg');
-        "
+        style="background-image: url('../images/home_bckgrnd_img.jpg')"
       >
         <div
           class="text-center text-white px-6 py-8 sm:px-12 sm:py-16 md:px-24 md:py-24 lg:px-36 lg:py-10 bg-black bg-opacity-70 rounded-lg w-full max-w-full sm:max-w-lg md:max-w-xl lg:max-w-3xl"
@@ -145,13 +259,14 @@
             Your Art Adventure Begins Here!
           </h1>
           <p class="text-xl md:text-2xl mb-6">
-            Take a journey where every piece tells a story and every visit is a new adventure.
+            Take a journey where every piece tells a story and every visit is a
+            new adventure.
           </p>
           <a href="" class="text-xl scroll-link"
             ><button
               class="btn btn-lg btn-primary text-2xl md:text-3xl hover:scale-105"
             >
-            Get Your Tickets Now!
+              Get Your Tickets Now!
             </button></a
           >
         </div>
@@ -180,17 +295,17 @@
         <div class="mb-6 md:mb-0">
           <h3 class="text-lg font-semibold mb-2">Follow Us</h3>
           <div class="flex space-x-4 mb-2">
-            <a
-              href="https://www.facebook.com/mfah.org/"
-              target="_blank"
-            >
-              <img src="../images/facebook.png" class="w-8 h-8 hover:scale-105" />
+            <a href="https://www.facebook.com/mfah.org/" target="_blank">
+              <img
+                src="../images/facebook.png"
+                class="w-8 h-8 hover:scale-105"
+              />
             </a>
-            <a
-              href="https://www.instagram.com/mfahouston"
-              target="_blank"
-            >
-              <img src="../images/instagram.png" class="w-8 h-8 hover:scale-105" />
+            <a href="https://www.instagram.com/mfahouston" target="_blank">
+              <img
+                src="../images/instagram.png"
+                class="w-8 h-8 hover:scale-105"
+              />
             </a>
           </div>
           <p class="text-xs text-gray-500">
@@ -212,45 +327,57 @@
 
     <script>
       function openModal() {
-        document.getElementById('login-modal').classList.remove('hidden');
+        document.getElementById("login-modal").classList.remove("hidden");
       }
-    
+
       function closeModal() {
-        document.getElementById('login-modal').classList.add('hidden');
-        document.getElementById('login-form').classList.remove('hidden');
-        document.getElementById('register-form').classList.add('hidden');
-        document.getElementById('toggle-register-button').classList.remove('hidden');
-        document.getElementById('toggle-login-button').classList.add('hidden');
-        document.getElementById('modal-title').textContent = 'Login';
+        document.getElementById("login-modal").classList.add("hidden");
+        document.getElementById("login-form").classList.remove("hidden");
+        document.getElementById("register-form").classList.add("hidden");
+        document
+          .getElementById("toggle-register-button")
+          .classList.remove("hidden");
+        document.getElementById("toggle-login-button").classList.add("hidden");
+        document.getElementById("modal-title").textContent = "Login";
       }
-    
+
       function showRegisterForm() {
-        document.getElementById('login-form').classList.add('hidden');
-        document.getElementById('register-form').classList.remove('hidden');
-        document.getElementById('toggle-register-button').classList.add('hidden');
-        document.getElementById('toggle-login-button').classList.remove('hidden');
-        document.getElementById('modal-title').textContent = 'Register';
-        document.getElementById('form-divider').classList.add('hidden');
-        document.getElementById('register-login-divider').classList.remove('hidden');
+        document.getElementById("login-form").classList.add("hidden");
+        document.getElementById("register-form").classList.remove("hidden");
+        document
+          .getElementById("toggle-register-button")
+          .classList.add("hidden");
+        document
+          .getElementById("toggle-login-button")
+          .classList.remove("hidden");
+        document.getElementById("modal-title").textContent = "Register";
+        document.getElementById("form-divider").classList.add("hidden");
+        document
+          .getElementById("register-login-divider")
+          .classList.remove("hidden");
       }
-    
+
       function showLoginForm() {
-        document.getElementById('login-form').classList.remove('hidden');
-        document.getElementById('register-form').classList.add('hidden');
-        document.getElementById('toggle-register-button').classList.remove('hidden');
-        document.getElementById('toggle-login-button').classList.add('hidden');
-        document.getElementById('modal-title').textContent = 'Login';
-        document.getElementById('form-divider').classList.remove('hidden');
-        document.getElementById('register-login-divider').classList.add('hidden');
+        document.getElementById("login-form").classList.remove("hidden");
+        document.getElementById("register-form").classList.add("hidden");
+        document
+          .getElementById("toggle-register-button")
+          .classList.remove("hidden");
+        document.getElementById("toggle-login-button").classList.add("hidden");
+        document.getElementById("modal-title").textContent = "Login";
+        document.getElementById("form-divider").classList.remove("hidden");
+        document
+          .getElementById("register-login-divider")
+          .classList.add("hidden");
       }
-    
+
       // Close modal when clicking outside of it
-      window.onclick = function(event) {
-        const modal = document.getElementById('login-modal');
+      window.onclick = function (event) {
+        const modal = document.getElementById("login-modal");
         if (event.target === modal) {
           closeModal();
         }
-      }
+      };
     </script>
   </body>
 </html>
