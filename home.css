@@ -1,0 +1,9 @@
+body,
+html {
+  overflow-x: hidden;
+}
+
+/* Home Section Styles */
+#home {
+  position: relative;
+}
