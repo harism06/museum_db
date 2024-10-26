@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script src="script.js"></script>
+        <link
+          href="https://cdn.jsdelivr.net/npm/daisyui@4.11.1/dist/full.min.css"
+          rel="stylesheet"
+          type="text/css"
+        />
+        <title>Museum of Fine Arts</title>
+        <link rel="icon" href="../images/logo.png" type="image/x-icon" />
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+        <link rel="stylesheet" href = "style.css">
+        <style> .form-container{
+          display: none; 
+      }
+      </style>
+      </head>
+    
+      <body>
+        <!-- Navigation Bar -->
+        <div class="navbar bg-base-300">
+          <div class="navbar-start">
+            <div class="dropdown">
+              <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 6h16M4 12h8m-8 6h16"
+                  />
+                </svg>
+              </div>
+              <ul
+                tabindex="0"
+                class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+              >
+                <li><a href="home.html" class="text-xl scroll-link">Home</a></li>
+                <li><a href="" class="scroll-link">Artists</a></li>
+                <li><a href="" class="scroll-link">Events</a></li>
+                <li><a href="" class="scroll-link">Exhibitions</a></li>
+                <li><a href="" class="scroll-link">Membership</a></li>
+                <li><a href="" class="scroll-link">Visitor Info</a></li>
+                <li><a href="login.html" class="scroll-link">Login</a></li>
+              </ul>
+            </div>
+            <a href="" class="btn btn-lg btn-ghost scroll-link"
+              ><img src="../images/logo.png" id="navbar-logo" class="w-16 h-16"
+            /><span>Museum of Fine Arts</span></a>
+          </div>
+          <div class="navbar-center hidden lg:flex">
+            <ul class="menu menu-horizontal px-1">
+              <li><a href="home.html" class="text-xl scroll-link">Home</a></li>
+              <li><a href="" class="text-xl scroll-link">Artists</a></li>
+              <li><a href="" class="text-xl scroll-link">Events</a></li>
+              <li><a href="" class="text-xl scroll-link">Exhibitions</a></li>
+              <li><a href="" class="text-xl scroll-link">Membership</a></li>
+              <li><a href="" class="text-xl scroll-link">Visitor Info</a></li>
+              <li><a href="login.html" class="text-xl scroll-link">Login</a></li>
+            </ul>
+          </div>
+          <div class="navbar-end"></div>
+        </div>
+      <div id="message"></div> <!-- Placeholder for messages -->
+      <div class = "way_to_center">
+        <div>Insert Data into Database</div>
+        <form id="dataForm">
+            <input type="text" name="name" placeholder="Name" required>
+            <input type="text" name="country" placeholder="Country" required>
+            <input type="int" name="dob" placeholder="year" maxlength="4" required><br>
+            <button type="submit">Submit</button>
+        </form>
+        
+        <div>Update Artist</div>
+        <form id="updateForm">
+            <input type="text" id="updateId" placeholder="Artist ID" required>
+            <input type="text" id="updateName" placeholder="New Name" required>
+            <input type="text" id="updateCountry" placeholder="New Country" required>
+            <input type="text" id="updateDob" placeholder="New Year" maxlength="4" required><br>
+            <button type="submit">Update Artist</button>
+        </form>
+        <div>Delete Artist by ID</div>
+        <input type="text" id="deleteId" placeholder="Artist ID" required><br>
+        <button onclick="deleteItem()">Delete Artist</button>
+    
+        <div id="result"></div>
+    
+        <script>
+            document.getElementById('dataForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const data = Object.fromEntries(formData.entries());
+    
+                try {
+                    const response = await fetch('http://localhost:3000/insert', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data),
+                    });
+    
+                    const result = await response.json();
+                    document.getElementById('result').innerText = `Inserted ID: ${result.id}`;
+                } catch (error) {
+                    console.error('Error:', error);
+                    document.getElementById('result').innerText = 'Error inserting data.';
+                }
+            });
+            document.getElementById('updateForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const id = document.getElementById('updateId').value;
+                const data = {
+                    name: document.getElementById('updateName').value,
+                    country: document.getElementById('updateCountry').value,
+                    dob: document.getElementById('updateDob').value,
+                };
+    
+                try {
+                    const response = await fetch(`http://localhost:3000/update/${id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data),
+                    });
+    
+                    const result = await response.json();
+                    document.getElementById('result').innerText = result.message; // Show success or failure message
+                } catch (error) {
+                    document.getElementById('result').innerText = 'Error updating item.'; // General error message
+                    console.error('Error updating item:', error);
+                }
+            });
+            
+            async function deleteItem() {
+                const id = document.getElementById('deleteId').value;
+                try {
+                    const response = await fetch(`http://localhost:3000/delete/${id}`, {
+                        method: 'DELETE',
+                    });
+    
+                    const result = await response.json();
+                    document.getElementById('result').innerText = result.message; // Show success or failure message
+                } catch (error) {
+                    document.getElementById('result').innerText = 'Error deleting item.'; // General error message
+                    console.error('Error deleting item:', error);
+                }
+            }
+        </script>
+</body>
+</html>
