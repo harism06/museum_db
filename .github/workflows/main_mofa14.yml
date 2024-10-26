@@ -51,9 +51,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.__clientidsecretname__ }}
-          tenant-id: ${{ secrets.__tenantidsecretname__ }}
-          subscription-id: ${{ secrets.__subscriptionidsecretname__ }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_8F85E87B5FD244AB83CE604C1180A237 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_83602EC91F714CCFAE5A4B76661EB267 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_6CA8166BD89D43A7A3A2972DBEBE6BE0 }}
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
@@ -62,3 +62,4 @@ jobs:
           app-name: 'mofa14'
           slot-name: 'Production'
           package: .
+          
