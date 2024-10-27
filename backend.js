@@ -228,6 +228,78 @@ router.put('/api/update-membership/:visitorID', authenticateToken, (req, res) =>
     });
 });
 
+// Staff Registration endpoint
+router.post('/auth/register-staff', async (req, res) => {
+    try {
+        const { name, email, password, phoneNumber, age, birthdate, role } = req.body;
+
+        // Basic validation checks
+        if (!name || !email || !password || !phoneNumber || !age || !birthdate || !role) {
+            return res.status(400).json({ message: 'All fields are required' });
+        }
+
+        // Validate role and map it to the correct code
+        let roleCode;
+        if (role === 'Employee') {
+            roleCode = 1;
+        } else if (role === 'Supervisor') {
+            roleCode = 2;
+        } else if (role === 'Manager') {
+            roleCode = 3;
+        } else {
+            return res.status(400).json({ message: 'Invalid role specified' });
+        }
+
+        // Check if email already exists in the visitor table (to avoid duplicates)
+        const checkEmailQuery = 'SELECT * FROM visitor WHERE Email = ?';
+        db.query(checkEmailQuery, [email], async (err, results) => {
+            if (err) {
+                console.error('Database query error:', err);
+                return res.status(500).json({ message: 'Server error' });
+            }
+
+            if (results.length > 0) {
+                return res.status(409).json({ message: 'Email already registered' });
+            }
+
+            // Hash the password
+            const hashedPassword = await bcrypt.hash(password, 10);
+
+            // Insert into visitor table
+            const visitorQuery = `
+                INSERT INTO visitor (Name, Age, birthdate, email, PhoneNum, membership_start_date, membership_end_date)
+                VALUES (?, ?, ?, ?, ?, NULL, NULL);
+            `;
+            const visitorParams = [name, age, birthdate, email, phoneNumber];
+
+            db.query(visitorQuery, visitorParams, (err, visitorResults) => {
+                if (err) {
+                    console.error('Error inserting into visitor table:', err);
+                    return res.status(500).json({ message: 'Server error' });
+                }
+
+                const visitorID = visitorResults.insertId;
+
+                // Insert into credentials table using visitorID
+                const credentialsQuery = `
+                    INSERT INTO credentials (email, password, visitorid, role)
+                    VALUES (?, ?, ?, ?);
+                `;
+                db.query(credentialsQuery, [email, hashedPassword, visitorID, roleCode], (err, credentialsResults) => {
+                    if (err) {
+                        console.error('Error inserting into credentials table:', err);
+                        return res.status(500).json({ message: 'Server error' });
+                    }
+
+                    return res.status(201).json({ message: 'Staff registration successful' });
+                });
+            });
+        });
+    } catch (error) {
+        console.error('Error during staff registration:', error);
+        return res.status(500).json({ message: 'Server error' });
+    }
+});
 
 
 
