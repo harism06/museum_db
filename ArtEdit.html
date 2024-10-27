@@ -14,6 +14,26 @@
         <script src="https://cdn.tailwindcss.com"></script>
         <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
         <link rel="stylesheet" href = "style.css">
+        <style> .way_to_center {
+    
+          width: auto;
+          height: auto;
+          padding: 25px ;
+          text-align: center;
+          font-size: 1.5rem;
+      }
+      .background-container {
+            background-image: url('images/home_bckgrnd_img.jpg'); /* Replace with your image path */
+            background-size: cover; /* Cover the entire area */
+            background-position: center; /* Center the image */
+            background-repeat: no-repeat; /* Prevent repeating */
+            height: calc(100vh - 100px); /* Adjust height to fill remaining space below navbar */
+            display: flex; /* For centering content */
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            filter: brightness(.7)
+        }
+      </style>
       </head>
     
       <body>
@@ -67,7 +87,8 @@
           </div>
           <div class="navbar-end"></div>
         </div>
-    <div class="contain">
+        <div class="background-container">
+    <div class="way_to_center">
       <h1>Art Management</h1>
 
       <!-- Insert Art Form -->
@@ -76,8 +97,8 @@
           <form id="artForm">
               <input type="text" name="title" placeholder="Title" required>
               <input type="text" name="year" placeholder="Year" required>
-              <input type="text" name="artistid" placeholder="ArtistID" required>
-              <input type="text" name="galleryid" placeholder="GalleryID" required>
+              <input type="number" name="artistid" placeholder="ArtistID" required>
+              <input type="number" name="galleryid" placeholder="GalleryID" required>
               <input type="text" name="value" placeholder="Value" required>
               <input type="text" name="medium" placeholder="Medium" required>
               <input type="text" name="dimensions" placeholder="Dimensions" required><br>
@@ -91,11 +112,11 @@
       <div>
           <h2>Update Art</h2>
           <form id="updateForm">
-              <input type="text" id="updateId" placeholder="Art ID" required>
+              <input type="number" id="updateId" placeholder="Art ID" required>
               <input type="text" name="updateTitle" placeholder="Title" required>
               <input type="text" name="updateyear" placeholder="Year" required>
-              <input type="text" name="updateArtistID" placeholder="ArtistID" required>
-              <input type="text" name="updateGalleryID" placeholder="GalleryID" required>
+              <input type="number" name="updateArtistID" placeholder="ArtistID" required>
+              <input type="number" name="updateGalleryID" placeholder="GalleryID" required>
               <input type="text" name="updateValue" placeholder="Value" required>
               <input type="text" name="updateMedium" placeholder="Medium" required>
               <input type="text" name="updateDimensions" placeholder="Dimensions" required><br>
@@ -107,11 +128,11 @@
       <!-- Delete Art Section -->
       <div>
           <h2>Delete Art by ID</h2>
-          <input type="text" id="deleteId" placeholder="Art ID" required><br>
+          <input type="number" id="deleteId" placeholder="Art ID" required><br>
           <button onclick="deleteArt()">Delete Art</button>
           <div id="deleteResult"></div>
       </div>
-  
+    </div>
       <script>
           // Insert Art
           document.getElementById('artForm').addEventListener('submit', async (e) => {
