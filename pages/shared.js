@@ -101,6 +101,71 @@ async function toggleProfileMenu() {
     }
 }
 
+// Function to save profile changes
+async function saveProfileChanges() {
+    const token = localStorage.getItem('authToken');
+
+    if (!token) {
+        alert('You are not logged in. Please log in and try again.');
+        return;
+    }
+
+    // Get updated values from the profile form
+    const name = document.getElementById('profile-name').value;
+    const age = document.getElementById('profile-age').value;
+    const birthdate = document.getElementById('profile-birthdate').value;
+    const email = document.getElementById('profile-email').value;
+    const phoneNumber = document.getElementById('profile-phone').value;
+
+    // Check if all fields are filled (optional but useful validation)
+    if (!name || !age || !birthdate || !email || !phoneNumber) {
+        alert('Please fill out all fields.');
+        return;
+    }
+
+    try {
+        const response = await fetch(`http://localhost:3000/auth/profile`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // Attach token in Authorization header
+            },
+            body: JSON.stringify({ name, age, birthdate, email, phoneNumber, visitorID }) // Send all fields
+        });
+
+        const result = await response.json();
+        
+        if (response.ok) {
+            // Check if the API call was successful
+            alert('Profile updated successfully.');
+            location.reload(); // Refresh the page after a successful update
+        } else if (response.status === 409) {
+            // Handle the case when the email already exists
+            alert(`Failed to update profile: ${result.message}`);
+        } else {
+            // Handle other potential issues
+            alert(`Failed to update profile: ${result.message}`);
+        }
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        alert('An error occurred. Please try again.');
+    }
+}
+
+// Function to sign out the user
+async function signOut() {
+    try {
+        localStorage.removeItem('authToken'); // Remove the token from localStorage
+        alert('Logout successful');
+
+        // Reload the page after a successful logout
+        location.reload();
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+    }
+}
+
 // Close modal when clicking outside of it
 window.onclick = function (event) {
     const overlay = document.getElementById('overlay');

@@ -42,16 +42,27 @@
           <li><a href="" class="text-xl scroll-link">Membership</a></li>
           <li><a href="" class="text-xl scroll-link">Visitor Info</a></li>
           <li><a href="#login-modal" id="login-link" class="text-xl scroll-link" onclick="openModal()">Login</a></li>
-          
+    
           <!-- Add Membership Button, hidden by default -->
           <li><a href="manage-members.html" id="add-membership-btn" class="text-xl scroll-link hidden">Manage Members</a></li>
           <li><a href="manage-employees.html" id="edit-employee-btn" class="text-xl scroll-link hidden">Manage Employees</a></li>
         </ul>
       </div>
-      <div class="navbar-end">
+      <div class="navbar-end flex items-center gap-4">
+        <!-- Notification Bell Icon -->
+        <div id="notification-bell" class="w-10 h-10 rounded-full bg-gray-700 hover:bg-gray-600 cursor-pointer relative">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mx-auto mt-2 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+          </svg>
+          <!-- Optional: Notification Count Badge -->
+          <span id="notification-count" class="absolute top-1 right-1 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full hidden">3</span>
+        </div>
+    
+        <!-- Profile Button -->
         <div id="profile-btn" class="w-10 h-10 rounded-full bg-gray-700 hover:bg-gray-600 cursor-pointer" onclick="toggleProfileMenu()"></div>
       </div>
     </div>
+    
 
     <!-- Profile Overlay -->
     <div id="overlay" class="fixed inset-0 bg-black bg-opacity-70 hidden z-40"></div>
@@ -218,5 +229,6 @@
 
     <!-- Place the script tag just before the closing body tag -->
     <script src="script.js"></script>
+    <script src="shared.js"></script>
   </body>
 </html>

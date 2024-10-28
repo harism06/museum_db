@@ -57,7 +57,6 @@ async function checkAccessAndLoadData() {
     }
 }
 
-// Function to display employees with Edit and Remove buttons
 function displayEmployees(data) {
     const container = document.createElement('div');
     container.classList.add('container', 'mx-auto', 'p-6', 'bg-gray-800', 'text-gray-200', 'rounded-lg', 'shadow-lg');
@@ -103,11 +102,13 @@ function displayEmployees(data) {
             <td class="px-4 py-2 border-b" id="created-at-${employee.VisitorID}">${createdAtFormatted}</td>
             <td class="px-4 py-2 border-b" id="position-${employee.VisitorID}">${position}</td>
             <td class="px-4 py-2 border-b">
-                <button class="btn btn-primary" onclick="editEmployee(${employee.VisitorID})">Edit</button>
-                <button class="btn btn-danger" onclick="confirmRemoveEmployee(${employee.VisitorID}, '${employee.Name}')">Remove</button>
-                <button class="btn btn-success hidden" id="save-btn-${employee.VisitorID}" onclick="saveEmployee(${employee.VisitorID})">Save</button>
+                <div class="flex gap-2">
+                    <button class="btn btn-primary" onclick="editEmployee(${employee.VisitorID})">Edit</button>
+                    <button class="btn bg-red-600 text-white border-opacity-0" onclick="confirmRemoveEmployee(${employee.VisitorID}, '${employee.Name}')">Remove</button>
+                    <button class="btn btn-success hidden" id="save-btn-${employee.VisitorID}" onclick="saveEmployee(${employee.VisitorID})">Save</button>
+                </div>
             </td>`;
-        
+
         tbody.appendChild(row);
     });
 
@@ -307,15 +308,24 @@ function formatDate(dateString) {
 }
 
 async function saveEmployee(visitorId) {
+    // Collect updated values from the respective input fields
     const name = document.querySelector(`#name-${visitorId} input`).value;
     const email = document.querySelector(`#email-${visitorId} input`).value;
     const birthdate = document.querySelector(`#birthdate-${visitorId} input`).value;
     const phone = document.querySelector(`#phone-${visitorId} input`).value;
     const role = document.querySelector(`#position-${visitorId} select`).value;
 
+    // Retrieve token from local storage for authorization
     const token = localStorage.getItem('authToken');
 
+    // Validate the inputs to ensure all necessary fields are provided
+    if (!name || !email || !birthdate || !phone || !role) {
+        alert('Please fill out all required fields.');
+        return;
+    }
+
     try {
+        // Make the PUT request to update employee details
         const response = await fetch(`http://localhost:3000/api/update-employee/${visitorId}`, {
             method: 'PUT',
             headers: {
@@ -326,19 +336,24 @@ async function saveEmployee(visitorId) {
                 name,
                 email,
                 birthdate,
-                phone,
-                role
+                phoneNumber: phone, // Consistent with backend field naming
+                role: parseInt(role) // Ensure role is sent as an integer (1, 2, or 3)
             })
         });
 
+        // Handle the response from the server
+        const result = await response.json();
         if (response.ok) {
             alert('Employee details updated successfully.');
-            location.reload(); // Reload the page or update the UI accordingly
+            location.reload(); // Reload the page to reflect updated details
+        } else if (response.status === 409) {
+            alert(`Failed to update employee details: ${result.message}`);
         } else {
-            alert('Failed to update employee details.');
+            alert(`Failed to update employee details: ${result.message}`);
         }
     } catch (error) {
         console.error('Error updating employee details:', error);
         alert('An error occurred. Please try again later.');
     }
 }
+

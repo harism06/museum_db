@@ -200,7 +200,7 @@ router.get('/api/memberships', authenticateToken, (req, res) => {
 // Update Visitor Information Endpoint
 router.put('/api/update-visitor/:visitorID', authenticateToken, (req, res) => {
     const visitorID = req.params.visitorID;
-    const { name, email, phoneNumber, age, birthdate, membership_start_date, membership_end_date, role } = req.body;
+    const { phoneNumber, birthdate, membership_start_date, membership_end_date } = req.body;
 
     // Only allow access if the role is 1 or higher
     if (req.user.role < 1) {
@@ -208,7 +208,7 @@ router.put('/api/update-visitor/:visitorID', authenticateToken, (req, res) => {
     }
 
     // Validate input
-    if (!name || !email || !phoneNumber || !age || !birthdate || !membership_start_date || !membership_end_date || !role) {
+    if (!phoneNumber || !birthdate || !membership_start_date || !membership_end_date) {
         return res.status(400).json({ message: 'All fields are required for updating visitor information.' });
     }
 
@@ -216,39 +216,23 @@ router.put('/api/update-visitor/:visitorID', authenticateToken, (req, res) => {
     const updateVisitorQuery = `
         UPDATE visitor 
         SET 
-            Name = ?, 
-            Age = ?, 
             birthdate = ?, 
-            email = ?, 
             PhoneNum = ?, 
             membership_start_date = ?, 
             membership_end_date = ? 
         WHERE VisitorID = ?;
     `;
 
-    // Update visitor information
-    db.query(updateVisitorQuery, [name, age, birthdate, email, phoneNumber, membership_start_date, membership_end_date, visitorID], (visitorError, visitorResults) => {
+    db.query(updateVisitorQuery, [birthdate, phoneNumber, membership_start_date, membership_end_date, visitorID], (visitorError, visitorResults) => {
         if (visitorError) {
             console.error('Error updating visitor information:', visitorError);
             return res.status(500).json({ message: 'Server error' });
         }
 
-        // Update credentials table if role is provided (optional based on your design)
-        const updateCredentialsQuery = `
-            UPDATE credentials 
-            SET role = ? 
-            WHERE visitorid = ?;
-        `;
-        db.query(updateCredentialsQuery, [role, visitorID], (credentialsError, credentialsResults) => {
-            if (credentialsError) {
-                console.error('Error updating visitor role:', credentialsError);
-                return res.status(500).json({ message: 'Server error' });
-            }
-
-            return res.status(200).json({ message: 'Visitor information updated successfully.' });
-        });
+        return res.status(200).json({ message: 'Visitor information updated successfully.' });
     });
 });
+
 
 // Staff Registration endpoint
 router.post('/auth/register-staff', async (req, res) => {
@@ -375,6 +359,7 @@ router.delete('/api/remove-employee/:visitorId', authenticateToken, (req, res) =
     });
 });
 
+
 // Update Profile Endpoint
 router.put('/auth/profile', authenticateToken, (req, res) => {
     const { name, email, phoneNumber, age, birthdate, visitorID } = req.body;
@@ -432,5 +417,70 @@ router.put('/auth/profile', authenticateToken, (req, res) => {
         });
     });
 });
+
+// Update Employee Information Endpoint
+router.put('/api/update-employee/:visitorId', authenticateToken, (req, res) => {
+    const { visitorId } = req.params;
+    const { name, email, phoneNumber, age, birthdate, role } = req.body;
+
+    // Only allow access if the role is Supervisor (2) or Manager (3)
+    if (req.user.role < 2) {
+        return res.status(403).json({ message: 'Forbidden: You do not have permission to update employee information.' });
+    }
+
+    // Validate input fields
+    if (!name || !email || !phoneNumber || !birthdate || !role) {
+        return res.status(400).json({ message: 'All fields are required for updating employee information.' });
+    }
+
+    // Step 1: Check if the new email already exists for another user
+    const emailCheckQuery = 'SELECT * FROM credentials WHERE email = ? AND visitorid != ?';
+    db.query(emailCheckQuery, [email, visitorId], (emailError, emailResults) => {
+        if (emailError) {
+            console.error('Error checking email:', emailError);
+            return res.status(500).json({ message: 'Server error while checking email' });
+        }
+
+        if (emailResults.length > 0) {
+            return res.status(409).json({ message: 'Email already in use by another user.' });
+        }
+
+        // Step 2: If email is not taken, update the visitor and credentials tables
+        const updateVisitorQuery = `
+            UPDATE visitor 
+            SET Name = ?, Email = ?, PhoneNum = ?, Age = ?, birthdate = ?
+            WHERE VisitorID = ?;
+        `;
+
+        db.query(updateVisitorQuery, [name, email, phoneNumber, age, birthdate, visitorId], (visitorError, visitorResults) => {
+            if (visitorError) {
+                console.error('Error updating visitor profile:', visitorError);
+                return res.status(500).json({ message: 'Server error while updating visitor profile' });
+            }
+
+            if (visitorResults.affectedRows === 0) {
+                return res.status(404).json({ message: 'Visitor not found or no changes made.' });
+            }
+
+            // Step 3: Update the role in the credentials table
+            const updateCredentialsQuery = `
+                UPDATE credentials 
+                SET email = ?, role = ?
+                WHERE visitorid = ?;
+            `;
+
+            db.query(updateCredentialsQuery, [email, role, visitorId], (credentialsError, credentialsResults) => {
+                if (credentialsError) {
+                    console.error('Error updating credentials:', credentialsError);
+                    return res.status(500).json({ message: 'Server error while updating credentials' });
+                }
+
+                return res.status(200).json({ message: 'Employee information updated successfully.' });
+            });
+        });
+    });
+});
+
+
 
 module.exports = router;

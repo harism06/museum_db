@@ -164,7 +164,7 @@ async function saveMembership(visitorId) {
     const token = localStorage.getItem('authToken');
 
     try {
-        const response = await fetch(`http://localhost:3000/api/update-membership/${visitorId}`, {
+        const response = await fetch(`http://localhost:3000/api/update-visitor/${visitorId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -172,22 +172,20 @@ async function saveMembership(visitorId) {
             },
             body: JSON.stringify({
                 birthdate: birthdateInput,
-                phone: phoneInput,
+                phoneNumber: phoneInput, // Matching the expected field name in the backend
                 membership_start_date: startDateInput,
                 membership_end_date: endDateInput
             })
         });
 
         if (response.ok) {
-            alert('Membership updated successfully.');
+            alert('Visitor information updated successfully.');
             location.reload(); // Reload the page or update the UI accordingly
         } else {
-            alert('Failed to update membership.');
+            alert('Failed to update visitor information.');
         }
     } catch (error) {
-        console.error('Error updating membership:', error);
+        console.error('Error updating visitor information:', error);
         alert('An error occurred. Please try again later.');
     }
 }
-
-
