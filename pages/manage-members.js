@@ -63,7 +63,7 @@ function displayMemberships(data) {
 
     const title = document.createElement('h2');
     title.classList.add('text-3xl', 'font-bold', 'mb-4', 'text-center');
-    title.textContent = 'Manage Visitor Memberships';
+    title.textContent = 'Manage Member Information';
     container.appendChild(title);
 
     const table = document.createElement('table');

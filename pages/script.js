@@ -157,6 +157,7 @@ window.onclick = function (event) {
     }
 }
 
+let visitorID; // Declare a global variable to hold the visitor ID
 
 // Toggle Profile Menu and Fetch User Data
 async function toggleProfileMenu() {
@@ -181,6 +182,9 @@ async function toggleProfileMenu() {
 
             if (response.ok) {
                 const userData = await response.json();
+
+                // Store visitor ID globally
+                visitorID = userData.visitorID;
 
                 // Populate profile information
                 document.getElementById('visitor-id').value = userData.visitorID || '';
@@ -260,7 +264,7 @@ document.getElementById('register-form').addEventListener('submit', async functi
         const response = await fetch('http://localhost:3000/auth/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, age, birthdate, phoneNumber, email, password })
+            body: JSON.stringify({ name, age, birthdate, phoneNumber, email, password})
         });
 
         const result = await response.json();
@@ -307,21 +311,33 @@ async function saveProfileChanges() {
     const email = document.getElementById('profile-email').value;
     const phoneNumber = document.getElementById('profile-phone').value;
 
+    // Check if all fields are filled (optional but useful validation)
+    if (!name || !age || !birthdate || !email || !phoneNumber) {
+        alert('Please fill out all fields.');
+        return;
+    }
+
     try {
-        const response = await fetch('http://localhost:3000/auth/profile', {
+        const response = await fetch(`http://localhost:3000/auth/profile`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}` // Attach token in Authorization header
             },
-            body: JSON.stringify({ name, age, birthdate, email, phoneNumber }) // Membership fields are excluded for now
+            body: JSON.stringify({ name, age, birthdate, email, phoneNumber, visitorID }) // Send all fields
         });
 
         const result = await response.json();
+        
         if (response.ok) {
+            // Check if the API call was successful
             alert('Profile updated successfully.');
-            location.reload(); // Refresh the page after successful update
+            location.reload(); // Refresh the page after a successful update
+        } else if (response.status === 409) {
+            // Handle the case when the email already exists
+            alert(`Failed to update profile: ${result.message}`);
         } else {
+            // Handle other potential issues
             alert(`Failed to update profile: ${result.message}`);
         }
     } catch (error) {
@@ -329,4 +345,3 @@ async function saveProfileChanges() {
         alert('An error occurred. Please try again.');
     }
 }
-

@@ -197,34 +197,56 @@ router.get('/api/memberships', authenticateToken, (req, res) => {
     });
 });
 
-// Update Membership Date Endpoint
-router.put('/api/update-membership/:visitorID', authenticateToken, (req, res) => {
+// Update Visitor Information Endpoint
+router.put('/api/update-visitor/:visitorID', authenticateToken, (req, res) => {
     const visitorID = req.params.visitorID;
-    const { membership_start_date, membership_end_date } = req.body;
+    const { name, email, phoneNumber, age, birthdate, membership_start_date, membership_end_date, role } = req.body;
 
     // Only allow access if the role is 1 or higher
     if (req.user.role < 1) {
         return res.status(403).json({ message: 'Forbidden: You do not have access to this resource.' });
     }
 
-    // Check if both dates are provided
-    if (!membership_start_date || !membership_end_date) {
-        return res.status(400).json({ message: 'Both membership start and end dates are required.' });
+    // Validate input
+    if (!name || !email || !phoneNumber || !age || !birthdate || !membership_start_date || !membership_end_date || !role) {
+        return res.status(400).json({ message: 'All fields are required for updating visitor information.' });
     }
 
-    const updateQuery = `
+    // Update visitor details in the database
+    const updateVisitorQuery = `
         UPDATE visitor 
-        SET membership_start_date = ?, membership_end_date = ? 
+        SET 
+            Name = ?, 
+            Age = ?, 
+            birthdate = ?, 
+            email = ?, 
+            PhoneNum = ?, 
+            membership_start_date = ?, 
+            membership_end_date = ? 
         WHERE VisitorID = ?;
     `;
 
-    db.query(updateQuery, [membership_start_date, membership_end_date, visitorID], (error, results) => {
-        if (error) {
-            console.error('Error updating membership dates:', error);
+    // Update visitor information
+    db.query(updateVisitorQuery, [name, age, birthdate, email, phoneNumber, membership_start_date, membership_end_date, visitorID], (visitorError, visitorResults) => {
+        if (visitorError) {
+            console.error('Error updating visitor information:', visitorError);
             return res.status(500).json({ message: 'Server error' });
         }
 
-        return res.status(200).json({ message: 'Membership dates updated successfully.' });
+        // Update credentials table if role is provided (optional based on your design)
+        const updateCredentialsQuery = `
+            UPDATE credentials 
+            SET role = ? 
+            WHERE visitorid = ?;
+        `;
+        db.query(updateCredentialsQuery, [role, visitorID], (credentialsError, credentialsResults) => {
+            if (credentialsError) {
+                console.error('Error updating visitor role:', credentialsError);
+                return res.status(500).json({ message: 'Server error' });
+            }
+
+            return res.status(200).json({ message: 'Visitor information updated successfully.' });
+        });
     });
 });
 
@@ -321,5 +343,94 @@ router.get('/api/employees', authenticateToken, (req, res) => {
 });
 
 
+// Deletion endpoint for removing an employee
+router.delete('/api/remove-employee/:visitorId', authenticateToken, (req, res) => {
+    const visitorId = req.params.visitorId;
+
+    // Check if the role of the user is high enough to perform deletions (e.g., Supervisor or Manager)
+    if (req.user.role < 2) {  // Assuming role 2 or higher (Supervisor or Manager) can delete employees
+        return res.status(403).json({ message: 'Forbidden: You do not have permission to perform this action.' });
+    }
+
+    // Query to delete the employee from the visitor and credentials tables
+    const deleteVisitorQuery = 'DELETE FROM visitor WHERE VisitorID = ?';
+    const deleteCredentialsQuery = 'DELETE FROM credentials WHERE visitorid = ?';
+
+    // Perform the deletion in the credentials table first (to avoid foreign key issues)
+    db.query(deleteCredentialsQuery, [visitorId], (err, credentialsResults) => {
+        if (err) {
+            console.error('Error deleting from credentials table:', err);
+            return res.status(500).json({ message: 'Server error while deleting credentials' });
+        }
+
+        // Delete from the visitor table
+        db.query(deleteVisitorQuery, [visitorId], (err, visitorResults) => {
+            if (err) {
+                console.error('Error deleting from visitor table:', err);
+                return res.status(500).json({ message: 'Server error while deleting visitor' });
+            }
+
+            return res.status(200).json({ message: 'Employee removed successfully' });
+        });
+    });
+});
+
+// Update Profile Endpoint
+router.put('/auth/profile', authenticateToken, (req, res) => {
+    const { name, email, phoneNumber, age, birthdate, visitorID } = req.body;
+
+    // Validate that all fields are provided
+    if (!name || !email || !phoneNumber || !age || !birthdate || !visitorID) {
+        return res.status(400).json({ message: 'All fields are required.' });
+    }
+
+    // Step 1: Check if the new email already exists in the credentials table
+    const emailCheckQuery = 'SELECT * FROM credentials WHERE email = ? AND visitorid != ?';
+    db.query(emailCheckQuery, [email, visitorID], (emailError, emailResults) => {
+        if (emailError) {
+            console.error('Error checking email:', emailError);
+            return res.status(500).json({ message: 'Server error' });
+        }
+
+        if (emailResults.length > 0) {
+            // If email already exists for another visitor, return a conflict response
+            return res.status(409).json({ message: 'Email already in use'});
+        }
+
+        // Step 2: If email is not already taken, update the visitor and credentials tables
+        const updateVisitorQuery = `
+            UPDATE visitor 
+            SET Name = ?, Email = ?, PhoneNum = ?, Age = ?, birthdate = ?
+            WHERE VisitorID = ?;
+        `;
+
+        db.query(updateVisitorQuery, [name, email, phoneNumber, age, birthdate, visitorID], (visitorError, visitorResults) => {
+            if (visitorError) {
+                console.error('Error updating visitor profile:', visitorError);
+                return res.status(500).json({ message: 'Server error' });
+            }
+
+            if (visitorResults.affectedRows === 0) {
+                return res.status(404).json({ message: 'Visitor not found or no changes made.' });
+            }
+
+            // Step 3: Update the credentials table with the new email if the visitor update is successful
+            const updateCredentialsQuery = `
+                UPDATE credentials 
+                SET email = ?
+                WHERE visitorid = ?;
+            `;
+
+            db.query(updateCredentialsQuery, [email, visitorID], (credentialsError, credentialsResults) => {
+                if (credentialsError) {
+                    console.error('Error updating credentials:', credentialsError);
+                    return res.status(500).json({ message: 'Server error' });
+                }
+
+                return res.status(200).json({ message: 'Profile and credentials updated successfully.' });
+            });
+        });
+    });
+});
 
 module.exports = router;

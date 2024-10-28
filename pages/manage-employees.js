@@ -57,6 +57,7 @@ async function checkAccessAndLoadData() {
     }
 }
 
+// Function to display employees with Edit and Remove buttons
 function displayEmployees(data) {
     const container = document.createElement('div');
     container.classList.add('container', 'mx-auto', 'p-6', 'bg-gray-800', 'text-gray-200', 'rounded-lg', 'shadow-lg');
@@ -103,15 +104,144 @@ function displayEmployees(data) {
             <td class="px-4 py-2 border-b" id="position-${employee.VisitorID}">${position}</td>
             <td class="px-4 py-2 border-b">
                 <button class="btn btn-primary" onclick="editEmployee(${employee.VisitorID})">Edit</button>
+                <button class="btn btn-danger" onclick="confirmRemoveEmployee(${employee.VisitorID}, '${employee.Name}')">Remove</button>
                 <button class="btn btn-success hidden" id="save-btn-${employee.VisitorID}" onclick="saveEmployee(${employee.VisitorID})">Save</button>
             </td>`;
-
+        
         tbody.appendChild(row);
     });
 
     table.appendChild(tbody);
     container.appendChild(table);
     document.body.appendChild(container);
+}
+
+// Function to show a confirmation popup when removing an employee
+async function confirmRemoveEmployee(visitorId, name) {
+    // Get the logged-in user's visitor ID to prevent self-removal
+    const token = localStorage.getItem('authToken');
+    
+    try {
+        const profileResponse = await fetch('http://localhost:3000/auth/profile', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        const profileData = await profileResponse.json();
+        const loggedInVisitorId = profileData.visitorID; // Adjust according to your API response
+
+        // Check if the user is trying to remove themselves
+        if (loggedInVisitorId === visitorId) {
+            alert("You cannot remove yourself as an employee.");
+            return;
+        }
+
+    } catch (error) {
+        console.error('Error fetching profile information:', error);
+        alert('An error occurred. Please try again later.');
+        return;
+    }
+
+    // Create overlay and confirmation popup
+    const overlay = document.createElement('div');
+    overlay.id = 'overlay';
+    overlay.classList.add('fixed', 'inset-0', 'bg-black', 'bg-opacity-70', 'z-40');
+
+    const popup = document.createElement('div');
+    popup.classList.add('fixed', 'inset-x-0', 'top-1/3', 'mx-auto', 'w-96', 'bg-gray-800', 'text-white', 'p-6', 'rounded-lg', 'shadow-lg', 'z-50');
+
+    // Confirmation message
+    const message = document.createElement('p');
+    message.classList.add('text-lg', 'mb-4', 'text-center');
+    message.innerHTML = `Are you sure you want to remove <b>${name}</b> as an employee?`;
+    popup.appendChild(message);
+
+    // Create a button container to center the buttons
+    const buttonContainer = document.createElement('div');
+    buttonContainer.classList.add('flex', 'justify-center', 'gap-4', 'mt-4');
+
+    // Create Yes button with progress bar container
+    const yesButtonContainer = document.createElement('div');
+    yesButtonContainer.classList.add('relative', 'inline-block');
+
+    const yesButton = document.createElement('button');
+    yesButton.textContent = 'Yes';
+    yesButton.classList.add('btn', 'bg-red-600', 'hover:bg-red-700', 'text-white', 'font-bold', 'px-4', 'py-2', 'rounded-md', 'relative');
+    yesButton.disabled = true; // Initially disabled
+
+    const progressBar = document.createElement('div');
+    progressBar.classList.add('absolute', 'inset-0', 'bg-gray-500', 'opacity-50', 'rounded-md', 'left-0'); // Rounded corners
+    progressBar.style.width = '0%';
+    yesButtonContainer.appendChild(progressBar);
+    yesButtonContainer.appendChild(yesButton);
+
+    // Create No button
+    const noButton = document.createElement('button');
+    noButton.textContent = 'No';
+    noButton.classList.add('btn', 'bg-green-600', 'hover:bg-green-700', 'text-white', 'font-bold', 'px-4', 'py-2', 'rounded-md');
+    noButton.addEventListener('click', () => {
+        document.body.removeChild(overlay);
+        document.body.removeChild(popup);
+    });
+
+    // Add buttons to the container
+    buttonContainer.appendChild(yesButtonContainer);
+    buttonContainer.appendChild(noButton);
+
+    // Append button container to popup
+    popup.appendChild(buttonContainer);
+
+    // Append popup and overlay to the body
+    document.body.appendChild(overlay);
+    document.body.appendChild(popup);
+
+    // Start the cooldown timer for the Yes button
+    let progress = 0;
+    const cooldownDuration = 3000; // 3 seconds
+    const intervalTime = 50; // Update progress every 50ms
+
+    const interval = setInterval(() => {
+        progress += (intervalTime / cooldownDuration) * 100;
+        progressBar.style.width = `${progress}%`;
+
+        if (progress >= 100) {
+            clearInterval(interval);
+            yesButton.disabled = false;
+            yesButton.addEventListener('click', () => {
+                removeEmployee(visitorId);
+                document.body.removeChild(overlay);
+                document.body.removeChild(popup);
+            });
+        }
+    }, intervalTime);
+}
+
+// Function to remove an employee
+async function removeEmployee(visitorId) {
+    const token = localStorage.getItem('authToken');
+
+    try {
+        const response = await fetch(`http://localhost:3000/api/remove-employee/${visitorId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (response.ok) {
+            alert('Employee removed successfully.');
+            location.reload(); // Reload the page or update the UI accordingly
+        } else {
+            alert('Failed to remove employee.');
+        }
+    } catch (error) {
+        console.error('Error removing employee:', error);
+        alert('An error occurred. Please try again later.');
+    }
 }
 
 function editEmployee(visitorId) {
@@ -212,4 +342,3 @@ async function saveEmployee(visitorId) {
         alert('An error occurred. Please try again later.');
     }
 }
-

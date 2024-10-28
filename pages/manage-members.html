@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Memberships</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.11.1/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-gray-200 min-h-screen flex flex-col">
+
+<!-- Navigation Bar -->
+<div class="navbar bg-gray-800">
+  <div class="navbar-start">
+    <div class="dropdown">
+      <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
+        </svg>
+      </div>
+      <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-gray-800 rounded-box w-52">
+        <li><a href="home.html" class="scroll-link">Artists</a></li>
+        <li><a href="home.html" class="scroll-link">Events</a></li>
+        <li><a href="home.html" class="scroll-link">Exhibitions</a></li>
+        <li><a href="home.html" class="scroll-link" onclick="openModal()">Membership</a></li>
+        <li><a href="home.html" class="scroll-link" onclick="openModal()">Visitor Info</a></li>
+      </ul>
+    </div>
+    <a href="home.html" class="btn btn-lg btn-ghost scroll-link">
+      <img src="../images/logo.png" id="navbar-logo" class="w-16 h-16" />
+      <span>Museum of Fine Arts</span>
+    </a>
+  </div>
+  <div class="navbar-center hidden lg:flex">
+    <ul class="menu menu-horizontal px-1">
+      <li><a href="" class="text-xl scroll-link">Artists</a></li>
+      <li><a href="" class="text-xl scroll-link">Events</a></li>
+      <li><a href="" class="text-xl scroll-link">Exhibitions</a></li>
+      <li><a href="" class="text-xl scroll-link">Membership</a></li>
+      <li><a href="" class="text-xl scroll-link">Visitor Info</a></li>
+      
+      <!-- Add Membership Button, hidden by default -->
+      <li><a href="manage-members.html" id="add-membership-btn" class="text-xl scroll-link">Manage Members</a></li>
+      <li><a href="manage-employees.html" id="edit-employee-btn" class="text-xl scroll-link">Manage Employees</a></li>
+    </ul>
+  </div>
+  <div class="navbar-end">
+    <div id="profile-btn" class="w-10 h-10 rounded-full bg-gray-700 hover:bg-gray-600 cursor-pointer" onclick="toggleProfileMenu()"></div>
+  </div>
+</div>
+
+      <!-- Profile Overlay -->
+      <div id="overlay" class="fixed inset-0 bg-black bg-opacity-70 hidden z-40"></div>
+
+      <!-- Profile Menu -->
+      <div class="fixed top-0 right-0 w-96 h-full bg-gray-800 transform translate-x-full transition-transform duration-300 z-50" id="profile-menu">
+        <div class="p-6">
+          <h2 class="text-2xl font-semibold mb-4">Profile Info</h2>
+      
+          <!-- Display VisitorID and Created_at (non-editable) -->
+          <div class="mb-4">
+            <label class="block text-sm font-medium">Visitor ID</label>
+            <input type="text" class="input input-bordered w-full bg-gray-700 text-white" id="visitor-id" disabled />
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-medium">Created At</label>
+            <input type="text" class="input input-bordered w-full bg-gray-700 text-white" id="created-at" disabled />
+          </div>
+      
+          <!-- Editable Fields: Name, Age, BirthDate, Email, PhoneNum -->
+          <div class="mb-4">
+            <label for="profile-name" class="block text-sm font-medium">Name</label>
+            <input type="text" id="profile-name" class="input input-bordered w-full bg-gray-700 text-white" />
+          </div>
+          <div class="mb-4">
+            <label for="profile-age" class="block text-sm font-medium">Age</label>
+            <input type="number" id="profile-age" class="input input-bordered w-full bg-gray-700 text-white" />
+          </div>
+          <div class="mb-4">
+            <label for="profile-birthdate" class="block text-sm font-medium">Birthdate</label>
+            <input type="date" id="profile-birthdate" class="input input-bordered w-full bg-gray-700 text-white" />
+          </div>
+          <div class="mb-4">
+            <label for="profile-email" class="block text-sm font-medium">Email</label>
+            <input type="email" id="profile-email" class="input input-bordered w-full bg-gray-700 text-white" />
+          </div>
+          <div class="mb-4">
+            <label for="profile-phone" class="block text-sm font-medium">Phone Number</label>
+            <input type="tel" id="profile-phone" class="input input-bordered w-full bg-gray-700 text-white" />
+          </div>
+      
+          <!-- Save Changes and Sign Out Buttons -->
+          <button class="btn btn-primary w-full mb-4" onclick="saveProfileChanges()">Save Changes</button>
+          <button class="btn btn-outline w-full text-white border-white" onclick="signOut()">Sign Out</button>
+        </div>
+      </div>
+      
+
+    <!-- Main Content Section -->
+    <div class="container mx-auto p-6">
+        <div id="membership-container" class="overflow-x-auto">
+            <!-- The table will be inserted here by JavaScript -->
+        </div>
+    </div>
+
+    <!-- JavaScript for the page -->
+    <script src="manage-members.js"></script>
+    <script src="shared.js"></script>
+</body>
+</html>
