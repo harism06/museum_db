@@ -301,6 +301,24 @@ router.post('/auth/register-staff', async (req, res) => {
     }
 });
 
+// Employee Endpoint to fetch employees
+router.get('/api/employees', authenticateToken, (req, res) => {
+    // Only allow access if the user's role is 1 or higher (e.g., employee, supervisor, manager)
+    if (req.user.role < 1) {
+        return res.status(403).json({ message: 'Forbidden: You do not have access to this resource.' });
+    }
+
+    // Query the employee_view to get the list of employees
+    const employeeQuery = `SELECT * FROM employee_view`;
+
+    db.query(employeeQuery, (error, results) => {
+        if (error) {
+            console.error('Error fetching employees:', error);
+            return res.status(500).json({ message: 'Server error' });
+        }
+        return res.status(200).json(results);
+    });
+});
 
 
 

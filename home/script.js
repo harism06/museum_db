@@ -39,6 +39,12 @@ async function checkProfileStatus() {
                 if (result.role >= 1) { // Assuming 1 or higher is an employee role
                     document.getElementById('add-membership-btn').classList.remove('hidden');
                     console.log('Add Membership button is now visible.');
+                    if(result.role >= 2) {
+                        document.getElementById('edit-employee-btn').classList.remove('hidden');
+                        console.log('Edit Employee button is now visible.');
+                    } else {
+                        console.log("User is not high enough role to see Edit Employee Button");
+                    }
                 } else {
                     console.log('User does not have a high enough role to see the Add Membership button.');
                 }
