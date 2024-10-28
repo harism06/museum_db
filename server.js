@@ -2,7 +2,6 @@ const express = require('express');
 const mysql = require('mysql2');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const path = require('path');
 
 const app = express();
 const port = 3000;
@@ -20,37 +19,10 @@ const pool = mysql.createPool({
     password: "password12345",
 });
 
-app.use(express.static(path.join(__dirname)));
-
-pool.getConnection((err,connection) => {
- if(err){
-    console.error("Error connecting to the database");
- }else{
-    console.log("connected to the database");
-    connection.release();
- }
-
-});
-// Report endpoint to get ticket sales revenue data
-app.get('/report', (req, res) => {
-    const query = `
-     SELECT 
-      DateofTransaction,
-      TotalAmount,
-      PaymentMethod,
-      VisitorID
-    FROM giftshoptransaction;
-    `;
-  
-    pool.query(query, (error, results) => {
-      if (error) {
-        console.error('Database query error:', error);
-        res.status(500).json({ error: 'Database query error' });
-      } else {
-        res.json(results);
-      }
-    });
-  });
+/*pool.connect((err) => {
+    if (err) throw err;
+    console.log('Connected to the database!');
+});*/
 
 // Insert data route
 app.post('/insert', (req, res) => {
