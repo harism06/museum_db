@@ -52,7 +52,7 @@ const server = http.createServer(function (req, res) {
     });
   } else if (req.url === "/") {
     // Serve the home.html file
-    const filePath = path.join(__dirname, "home", "home.html");
+    const filePath = path.join(__dirname,"index.html");
     fs.readFile(filePath, (err, data) => {
       if (err) {
         res.writeHead(404, { "Content-Type": "text/html" });
@@ -73,12 +73,12 @@ const server = http.createServer(function (req, res) {
 
 server.listen(port, () => {
   console.log(`Server running on port ${port}`);
-
-  connection.connect(function (err) {
-    if (err) {
-      console.error("Error connecting to the database:", err.stack);
-      return;
-    }
-    console.log("Database connected as id " + connection.threadId);
+  connection.getConnection((err, conn) => {
+  if (err) {
+    console.error("Error connecting to the database:", err.stack);
+  } else {
+    console.log("Database connected!");
+    conn.release(); // Release the connection back to the pool
+  }
   });
 });

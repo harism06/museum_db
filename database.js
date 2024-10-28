@@ -1,10 +1,10 @@
 var mysql = require("mysql2");
 
-var connection = mysql.createConnection({
+var pool = mysql.createPool({
   host: "museumdb.mysql.database.azure.com",
   database: "museumdb",
   user: "user",
   password: "password12345",
 });
 
-module.exports = connection;
+module.exports = pool;

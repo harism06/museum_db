@@ -18,6 +18,8 @@
   "homepage": "https://github.com/harism06/museum_db#readme",
   "description": "",
   "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.1",
     "mysql": "^2.18.1",
     "mysql2": "^3.11.3",
     "node-modules": "^1.0.1",
