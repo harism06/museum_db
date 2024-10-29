@@ -25,7 +25,7 @@ const pool = mysql.createPool({
 });*/
 
 // Insert data route
-app.post('/insert', (req, res) => {
+app.post('/artist/insert', (req, res) => {
     const { name, country, dob } = req.body;
 
     const query = 'INSERT INTO artist (Name, Country, BirthYear) VALUES (?, ?, ?)';
@@ -36,7 +36,7 @@ app.post('/insert', (req, res) => {
         res.json({ id: results.insertId }); // Send back the auto-incremented ID
     });
 });
-app.delete('/delete/:id', (req, res) => {
+app.delete('/artist/delete/:id', (req, res) => {
     const { id } = req.params;
     const query = 'DELETE FROM artist WHERE ArtistID = ?';
 
@@ -50,7 +50,7 @@ app.delete('/delete/:id', (req, res) => {
         res.json({ message: 'Item deleted successfully.' });
     });
 });
-app.put('/update/:id', (req, res) => {
+app.put('/artist/update/:id', (req, res) => {
     const { id } = req.params;
     const { name, country, dob } = req.body;
     const query = 'UPDATE artist SET Name = ?, Country = ?, BirthYear = ? WHERE ArtistID = ?';
