@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 });
 
 let baseURL = 'https://museum-db-2.onrender.com' || 'http://localhost:3000';
+
 // Function to open the modal
 function openModal() {
     document.getElementById('login-modal').classList.remove('hidden');

@@ -2,6 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
     checkAccessAndLoadData();
 });
 
+let baseURL = 'https://museum-db-2.onrender.com' || 'http://localhost:3000';
+
 async function checkAccessAndLoadData() {
     const token = localStorage.getItem('authToken');
     
@@ -13,7 +15,7 @@ async function checkAccessAndLoadData() {
 
     try {
         // Fetch the profile information first to get the user's role
-        const profileResponse = await fetch('http://localhost:3000/auth/profile', {
+        const profileResponse = await fetch(`${baseURL}/auth/profile`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -36,7 +38,7 @@ async function checkAccessAndLoadData() {
         }
 
         // Fetch and display membership data if the user has the required role
-        const response = await fetch('http://localhost:3000/api/memberships', {
+        const response = await fetch(`${baseURL}/api/memberships`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -164,7 +166,7 @@ async function saveMembership(visitorId) {
     const token = localStorage.getItem('authToken');
 
     try {
-        const response = await fetch(`http://localhost:3000/api/update-visitor/${visitorId}`, {
+        const response = await fetch(`${baseURL}/api/update-visitor/${visitorId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

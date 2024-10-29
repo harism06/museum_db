@@ -1,13 +1,15 @@
 // Declare a global variable to hold the visitor ID
 let visitorID;
-let baseURL = 'https://museum-db-2.onrender.com' || 'http://localhost:3000';
+
 // Function to check profile status (to be called on DOM load in each page)
 document.addEventListener('DOMContentLoaded', async function () {
     checkProfileStatus();
 });
+let baseUrl = 'https://museum-db-2.onrender.com' || 'http://localhost:3000';
 
 // Function to check login status and toggle profile button visibility
 async function checkProfileStatus() {
+
     const token = localStorage.getItem('authToken');
     
     if (!token) {
@@ -22,7 +24,7 @@ async function checkProfileStatus() {
     }
 
     try {
-        const response = await fetch(`${baseURL}/auth/profile`, {
+        const response = await fetch(`${baseUrl}/auth/profile`, {
             method: 'GET',
             headers: { 
                 'Content-Type': 'application/json',
@@ -87,6 +89,7 @@ async function checkProfileStatus() {
 
 // Function to toggle the profile menu
 async function toggleProfileMenu() {
+
     const profileMenu = document.getElementById('profile-menu');
     const overlay = document.getElementById('overlay');
 
@@ -98,7 +101,7 @@ async function toggleProfileMenu() {
         // Fetch and populate user data
         try {
             const token = localStorage.getItem('authToken');
-            const response = await fetch(`${baseURL}/auth/profile`, {
+            const response = await fetch(`${baseUrl}/auth/profile`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -139,6 +142,7 @@ async function toggleProfileMenu() {
 
 // Function to save profile changes
 async function saveProfileChanges() {
+
     const token = localStorage.getItem('authToken');
 
     if (!token) {
@@ -160,7 +164,7 @@ async function saveProfileChanges() {
     }
 
     try {
-        const response = await fetch(`${baseURL}/auth/profile`, {
+        const response = await fetch(`${baseUrl}/auth/profile`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -221,6 +225,7 @@ document.getElementById('notification-bell').addEventListener('click', toggleNot
 
 // Fetches notifications and displays them
 async function fetchNotifications() {
+
     console.log('Fetching notifications...');
     const notificationBox = document.getElementById('notification-box');
     const notificationList = document.getElementById('notification-list');
@@ -236,7 +241,7 @@ async function fetchNotifications() {
     try {
         // Make API call to fetch notifications
         console.log(`Fetching notifications for visitorID: ${visitorID}`);
-        const response = await fetch(`${baseURL}/api/notifications?visitorID=${visitorID}`, {
+        const response = await fetch(`${baseUrl}/api/notifications?visitorID=${visitorID}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -313,6 +318,7 @@ document.addEventListener('click', function (event) {
 });
 
 async function markNotificationAsChecked(notificationId) {
+
     console.log('Marking notification as checked:', notificationId);
     const token = localStorage.getItem('authToken');
 
@@ -322,7 +328,7 @@ async function markNotificationAsChecked(notificationId) {
     }
 
     try {
-        const response = await fetch(`${baseURL}/api/notifications/check/${notificationId}`, {
+        const response = await fetch(`${baseUrl}/api/notifications/check/${notificationId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

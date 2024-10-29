@@ -2,6 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
     checkAccessAndLoadData();
 });
 
+let baseURL = 'https://museum-db-2.onrender.com' || 'http://localhost:3000';
+
 async function checkAccessAndLoadData() {
     const token = localStorage.getItem('authToken');
     
@@ -13,7 +15,7 @@ async function checkAccessAndLoadData() {
 
     try {
         // Fetch the profile information first to get the user's role
-        const profileResponse = await fetch('http://localhost:3000/auth/profile', {
+        const profileResponse = await fetch(`${baseURL}/auth/profile`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -39,7 +41,7 @@ async function checkAccessAndLoadData() {
         }
 
         // Fetch employee data if the user has the required role
-        const response = await fetch('http://localhost:3000/api/employees', {
+        const response = await fetch(`${baseURL}/api/employees`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -130,7 +132,7 @@ async function confirmRemoveEmployee(visitorId, name) {
     const token = localStorage.getItem('authToken');
     
     try {
-        const profileResponse = await fetch('http://localhost:3000/auth/profile', {
+        const profileResponse = await fetch(`${baseURL}/auth/profile`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -232,7 +234,7 @@ async function removeEmployee(visitorId) {
     const token = localStorage.getItem('authToken');
 
     try {
-        const response = await fetch(`http://localhost:3000/api/remove-employee/${visitorId}`, {
+        const response = await fetch(`${baseURL}/api/remove-employee/${visitorId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -333,7 +335,7 @@ async function saveEmployee(visitorId) {
 
     try {
         // Make the PUT request to update employee details
-        const response = await fetch(`http://localhost:3000/api/update-employee/${visitorId}`, {
+        const response = await fetch(`${baseURL}/api/update-employee/${visitorId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -403,7 +405,7 @@ document.getElementById('create-employee-btn').addEventListener('click', async f
         };
 
         // Send the request to the backend to register the new staff member
-        const response = await fetch('http://localhost:3000/auth/register-staff', {
+        const response = await fetch(`${baseURL}/auth/register-staff`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
