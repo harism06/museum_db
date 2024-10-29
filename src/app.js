@@ -21,16 +21,15 @@ app.use(cookieParser());
 // Middleware to parse JSON bodies
 app.use(bodyParser.json());
 
-// Serve static files (like images, CSS, JS) from the "home" directory
-app.use(express.static(path.join(__dirname, 'home')));
+// Serve static files (like images, CSS, JS) from the "public" directory
+app.use(express.static(path.join(__dirname, '../public')));
 
 // Register backend routes for /auth endpoints
 app.use(backendRoutes);
 
 // Serve the home page (home.html)
 app.get('/', (req, res) => {
-    const filePath = path.join(__dirname, 'home', 'home.html');
-    res.sendFile(filePath);
+    res.sendFile(path.join(__dirname, '../public', 'home.html'));
 });
 
 // Handle requests for missing routes (404 errors)
