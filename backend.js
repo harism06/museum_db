@@ -98,15 +98,25 @@ router.post('/auth/login', (req, res) => {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
 
-        // Generate a JWT token
-        const token = jwt.sign({ userId: user.visitorid, email: user.email }, secretKey, {
-            expiresIn: '1h' // Token will expire in 1 hour
-        });
+        // Update the lastLoggedIn field in the visitor table
+        const updateLoginTimeQuery = 'UPDATE visitor SET lastLoggedIn = NOW() WHERE VisitorID = ?';
+        db.query(updateLoginTimeQuery, [user.visitorid], (err) => {
+            if (err) {
+                console.error('Error updating last login time:', err);
+                return res.status(500).json({ message: 'Server error' });
+            }
 
-        // Return the token in the response body instead of setting it in a cookie
-        return res.status(200).json({ token, message: 'Login successful' });
+            // Generate a JWT token
+            const token = jwt.sign({ userId: user.visitorid, email: user.email }, secretKey, {
+                expiresIn: '1h' // Token will expire in 1 hour
+            });
+
+            // Return the token in the response body instead of setting it in a cookie
+            return res.status(200).json({ token, message: 'Login successful' });
+        });
     });
 });
+
 
 
 // Middleware to authenticate a user using the token in cookies
@@ -479,6 +489,81 @@ router.put('/api/update-employee/:visitorId', authenticateToken, (req, res) => {
             });
         });
     });
+});
+
+router.get('/api/notifications', async (req, res) => {
+    try {
+        // Parse visitorID from the query parameters
+        const visitorID = parseInt(req.query.visitorID, 10);
+
+        // Validate parsed visitorID
+        if (isNaN(visitorID)) {
+            return res.status(400).json({ message: 'visitorID must be a valid number' });
+        }
+
+        // SQL query to fetch notifications for the visitor
+        const query = `
+            SELECT NotificationId, NotificationText, NotificationTime, IsCheck
+            FROM notification
+            WHERE visitorID = ? and IsCheck = 0
+            ORDER BY NotificationTime DESC
+        `;
+
+        // Execute the query
+        db.query(query, [visitorID], (error, results) => {
+            if (error) {
+                console.error('Error fetching notifications:', error);
+                return res.status(500).json({ message: 'Server error' });
+            }
+
+            // If no notifications are found
+            if (results.length === 0) {
+                return res.status(200).json([]);
+            }
+
+            // Return the notifications
+            return res.status(200).json(results);
+        });
+    } catch (error) {
+        console.error('Error in notifications endpoint:', error);
+        return res.status(500).json({ message: 'Server error' });
+    }
+});
+
+
+router.put('/api/notifications/check/:id', async (req, res) => {
+    const notificationId = req.params.id;
+    console.log(`Received request to mark notification as checked, ID: ${notificationId}`);
+
+    // Check if the ID is valid
+    if (!notificationId) {
+        console.error('Notification ID is missing');
+        return res.status(400).json({ message: 'Notification ID is required' });
+    }
+
+    try {
+        // SQL query to update the notification
+        const query = `UPDATE notification SET IsCheck = 1 WHERE NotificationId = ?`;
+        console.log(`Executing query: ${query}, with ID: ${notificationId}`);
+
+        db.query(query, [notificationId], (error, results) => {
+            if (error) {
+                console.error('Error updating notification:', error);
+                return res.status(500).json({ message: 'Server error' });
+            }
+
+            if (results.affectedRows === 0) {
+                console.warn('Notification not found or already checked:', notificationId);
+                return res.status(404).json({ message: 'Notification not found' });
+            }
+
+            console.log(`Notification with ID: ${notificationId} marked as checked`);
+            return res.status(200).json({ message: 'Notification marked as checked' });
+        });
+    } catch (error) {
+        console.error('Error in checking notification endpoint:', error);
+        return res.status(500).json({ message: 'Server error' });
+    }
 });
 
 

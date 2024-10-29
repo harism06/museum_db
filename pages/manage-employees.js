@@ -29,13 +29,16 @@ async function checkAccessAndLoadData() {
             return;
         }
 
+        // Store the user's role for use in filtering employee data
+        const userRole = profileData.role;
+
         // Check if the user has the necessary role (e.g., 1 or higher)
-        if (profileData.role < 1) {
+        if (userRole < 1) {
             window.location.href = "home.html";
             return;
         }
 
-        // Fetch and display employee data if the user has the required role
+        // Fetch employee data if the user has the required role
         const response = await fetch('http://localhost:3000/api/employees', {
             method: 'GET',
             headers: {
@@ -50,12 +53,16 @@ async function checkAccessAndLoadData() {
         }
 
         const data = await response.json();
-        displayEmployees(data);
+
+        // Filter employees based on userRole to show only those with equal or lower role numbers
+        const filteredEmployees = data.filter(employee => employee.role <= userRole);
+        displayEmployees(filteredEmployees);
     } catch (error) {
         console.error('Error fetching employee data:', error);
         alert('An error occurred. Please try again later.');
     }
 }
+
 
 function displayEmployees(data) {
     const container = document.createElement('div');
@@ -357,3 +364,68 @@ async function saveEmployee(visitorId) {
     }
 }
 
+// Add event listener to the Create New Employee button
+document.getElementById('create-employee-btn').addEventListener('click', async function (event) {
+    event.preventDefault(); // Prevent the default form submission behavior
+
+    // Get values from the form inputs
+    const name = document.getElementById('employee-name').value.trim();
+    const age = document.getElementById('employee-age').value.trim();
+    const birthdate = document.getElementById('employee-birthdate').value;
+    const email = document.getElementById('employee-email').value.trim();
+    const phoneNumber = document.getElementById('employee-phone').value.trim();
+    const password = document.getElementById('employee-password').value.trim();
+    const role = document.getElementById('employee-role').value;
+
+    // Validate required fields
+    if (!name || !age || !birthdate || !email || !phoneNumber || !password || !role) {
+        alert('Please fill out all fields.');
+        return;
+    }
+
+    try {
+        // Get the auth token from localStorage
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            alert('You are not logged in. Please log in and try again.');
+            return;
+        }
+
+        // Create the new employee payload
+        const payload = {
+            name,
+            age,
+            birthdate,
+            email,
+            phoneNumber,
+            password,
+            role,
+        };
+
+        // Send the request to the backend to register the new staff member
+        const response = await fetch('http://localhost:3000/auth/register-staff', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`, // Attach the token for authentication
+            },
+            body: JSON.stringify(payload),
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            // Handle a successful response
+            alert(result.message);
+            // Optionally, reset the form fields or redirect to another page
+            document.getElementById('create-employee-form').reset();
+            location.reload(); // Reload the page to reflect changes
+        } else {
+            // Handle an error response
+            alert(`Failed to register staff: ${result.message}`);
+        }
+    } catch (error) {
+        console.error('Error during staff registration:', error);
+        alert('An error occurred. Please try again later.');
+    }
+});

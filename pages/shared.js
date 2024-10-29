@@ -14,7 +14,10 @@ async function checkProfileStatus() {
         console.log('No token found in localStorage');
         document.getElementById('login-link').classList.remove('hidden');
         document.getElementById('profile-btn').classList.add('hidden');
-        console.log('Login link is now visible and profile button is hidden.');
+        document.getElementById('add-membership-btn').classList.add('hidden');
+        document.getElementById('edit-employee-btn').classList.add('hidden');
+        document.getElementById('notification-bell').classList.add('hidden'); // Hide notification bell
+        console.log('Login link is now visible, and profile button and notification bell are hidden.');
         return;
     }
 
@@ -34,18 +37,51 @@ async function checkProfileStatus() {
             console.log('User is logged in, displaying profile button.');
             document.getElementById('profile-btn').classList.remove('hidden');
             document.getElementById('login-link').classList.add('hidden');
-            console.log('Profile button is now visible and login link is hidden.');
+            document.getElementById('notification-bell').classList.remove('hidden'); // Show notification bell
+            console.log('Profile button and notification bell are now visible, and login link is hidden.');
+
+            // Check user role and display Add Membership and Edit Employee buttons accordingly
+            if (result.role !== undefined) {
+                console.log(`User role: ${result.role}`);
+                if (result.role >= 1) { // Display "Manage Members" for roles 1 or higher
+                    document.getElementById('add-membership-btn').classList.remove('hidden');
+                    console.log('Add Membership button is now visible.');
+
+                    if (result.role >= 2) { // Display "Manage Employees" for roles 2 or higher
+                        document.getElementById('edit-employee-btn').classList.remove('hidden');
+                        console.log('Edit Employee button is now visible.');
+                    } else {
+                        document.getElementById('edit-employee-btn').classList.add('hidden');
+                        console.log('User does not have a high enough role to see the Edit Employee Button');
+                    }
+                } else {
+                    document.getElementById('add-membership-btn').classList.add('hidden');
+                    console.log('User does not have a high enough role to see the Add Membership button.');
+                }
+            } else {
+                console.log('User role is not defined in the response.');
+            }
+
+            // Set visitor ID globally
+            visitorID = result.visitorID;
+
         } else {
             console.log('User not logged in or token invalid.');
             document.getElementById('login-link').classList.remove('hidden');
             document.getElementById('profile-btn').classList.add('hidden');
-            console.log('Login link is now visible and profile button is hidden.');
+            document.getElementById('add-membership-btn').classList.add('hidden');
+            document.getElementById('edit-employee-btn').classList.add('hidden');
+            document.getElementById('notification-bell').classList.add('hidden'); // Hide notification bell
+            console.log('Login link is now visible, and profile button and notification bell are hidden.');
         }
     } catch (error) {
         console.error('Error verifying login status:', error);
         document.getElementById('login-link').classList.remove('hidden');
         document.getElementById('profile-btn').classList.add('hidden');
-        console.log('Login link is now visible and profile button is hidden due to error.');
+        document.getElementById('add-membership-btn').classList.add('hidden');
+        document.getElementById('edit-employee-btn').classList.add('hidden');
+        document.getElementById('notification-bell').classList.add('hidden'); // Hide notification bell
+        console.log('Login link is now visible, and profile button and notification bell are hidden due to error.');
     }
 }
 
@@ -166,7 +202,89 @@ async function signOut() {
     }
 }
 
-// Close modal when clicking outside of it
+function toggleNotificationBox() {
+    const notificationBox = document.getElementById('notification-box');
+    const isHidden = notificationBox.classList.contains('hidden');
+
+    if (isHidden) {
+        // If the box is hidden, fetch notifications and show the box
+        fetchNotifications();
+        notificationBox.classList.remove('hidden');
+    } else {
+        // If the box is visible, hide it
+        notificationBox.classList.add('hidden');
+    }
+}
+
+// Attach the event listener to the notification bell
+document.getElementById('notification-bell').addEventListener('click', toggleNotificationBox);
+
+// Fetches notifications and displays them
+async function fetchNotifications() {
+    console.log('Fetching notifications...');
+    const notificationBox = document.getElementById('notification-box');
+    const notificationList = document.getElementById('notification-list');
+    const token = localStorage.getItem('authToken');
+    notificationList.innerHTML = '';
+
+    if (!token || !visitorID) {
+        console.log('No token or visitorID found');
+        notificationList.innerHTML = `<div class="text-center p-2 text-gray-300">No new notifications</div>`;
+        return;
+    }
+
+    try {
+        // Make API call to fetch notifications
+        console.log(`Fetching notifications for visitorID: ${visitorID}`);
+        const response = await fetch(`http://localhost:3000/api/notifications?visitorID=${visitorID}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        const notifications = await response.json();
+        console.log('Notifications fetched:', notifications);
+
+        if (response.ok && notifications.length > 0) {
+            notifications.forEach(notification => {
+                const notificationItem = document.createElement('div');
+                notificationItem.classList.add('notification-item', 'p-2', 'border-b', 'border-gray-700', 'flex', 'justify-between', 'items-center');
+
+                // Create the content and the "X" button
+                notificationItem.innerHTML = `
+                    <div>
+                        <p>${notification.NotificationText}</p>
+                        <span class="text-sm text-gray-400">${new Date(notification.NotificationTime).toLocaleString()}</span>
+                    </div>
+                    <button class="mark-checked-btn text-red-600" data-id="${notification.NotificationId}">X</button>
+                `;
+
+                // Attach the click event to the "X" button
+                notificationItem.querySelector('.mark-checked-btn').addEventListener('click', async (event) => {
+                    const notificationId = event.target.getAttribute('data-id');
+                    console.log(`Marking notification as checked: ${notificationId}`);
+                    await markNotificationAsChecked(notificationId);
+                    // Optionally, remove or update the notification item
+                    notificationItem.classList.add('hidden'); // Hides the item after marking as checked
+                });
+
+                notificationList.appendChild(notificationItem);
+            });
+        } else {
+            // Display a message if no notifications are found
+            console.log('No new notifications found');
+            notificationList.innerHTML = `<div class="text-center p-2 text-gray-300">No new notifications</div>`;
+        }
+    } catch (error) {
+        console.error('Error fetching notifications:', error);
+        notificationList.innerHTML = `<div class="text-center p-2 text-gray-300">Error fetching notifications</div>`;
+    }
+}
+
+
+// Close modal or profile menu when clicking outside of it
 window.onclick = function (event) {
     const overlay = document.getElementById('overlay');
     const profileMenu = document.getElementById('profile-menu');
@@ -177,3 +295,47 @@ window.onclick = function (event) {
         overlay.classList.add('hidden');
     }
 };
+
+// Close notification box when clicking outside of it
+document.addEventListener('click', function (event) {
+    const notificationBox = document.getElementById('notification-box');
+    const notificationBell = document.getElementById('notification-bell');
+
+    if (notificationBox && !notificationBox.classList.contains('hidden')) {
+        // Check if the click is outside the notification box and notification bell
+        if (
+            !notificationBox.contains(event.target) &&
+            !notificationBell.contains(event.target)
+        ) {
+            notificationBox.classList.add('hidden');
+        }
+    }
+});
+
+async function markNotificationAsChecked(notificationId) {
+    console.log('Marking notification as checked:', notificationId);
+    const token = localStorage.getItem('authToken');
+
+    if (!token) {
+        alert('You are not logged in. Please log in and try again.');
+        return;
+    }
+
+    try {
+        const response = await fetch(`http://localhost:3000/api/notifications/check/${notificationId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            console.error('Failed to mark notification as checked:', response.status, response.statusText);
+        } else {
+            console.log('Notification successfully marked as checked');
+        }
+    } catch (error) {
+        console.error('Error marking notification as checked:', error);
+    }
+}
