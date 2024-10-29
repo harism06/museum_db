@@ -3,7 +3,7 @@ require('dotenv').config(); // To load environment variables
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const express = require('express');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 const db = require('./database'); // Import the database connection
 
 const secretKey = process.env.JWT_SECRET_KEY || 'default_secret_key';
