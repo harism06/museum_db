@@ -19,10 +19,6 @@ const pool = mysql.createPool({
     password: "password12345",
 });
 
-/*pool.connect((err) => {
-    if (err) throw err;
-    console.log('Connected to the database!');
-});*/
 
 // Insert data route
 app.post('/artist/insert', (req, res) => {
@@ -66,7 +62,7 @@ app.put('/artist/update/:id', (req, res) => {
         res.json({ message: 'Item updated successfully.' });
     });
 });
-app.post('/art/insert', (req, res) => {
+app.post('/artwork/insert', (req, res) => {
     const { title, medium, year } = req.body;
     const query = 'INSERT INTO artwork (Title ,YearCreated ,ArtistID , GalleryID , Value , Medium ,Dimensions ) VALUES (?, ?, ? , ? , ? , ? , ?)';
     pool.query(query, [title, year, artistid, galleryid, value, medium, dimesions ], (error, results) => {
@@ -78,7 +74,7 @@ app.post('/art/insert', (req, res) => {
 });
 
 // Update Art
-app.put('/art/update/:id', (req, res) => {
+app.put('/artwork/update/:id', (req, res) => {
     const { id } = req.params;
     const { title, medium, year } = req.body;
     const query = 'UPDATE artwork SET Title = ?,YearCreated = ?,ArtistID = ?, GalleryID = ?, Value = ? , Medium = ?,Dimensions = ? WHERE artworkID = ?';
@@ -94,7 +90,7 @@ app.put('/art/update/:id', (req, res) => {
 });
 
 // Delete Art
-app.delete('/art/delete/:id', (req, res) => {
+app.delete('/artwork/delete/:id', (req, res) => {
     const { id } = req.params;
     const query = 'DELETE FROM artwork WHERE ArtworkID = ?';
     pool.query(query, [id], (error, results) => {
@@ -107,7 +103,135 @@ app.delete('/art/delete/:id', (req, res) => {
         res.json({ message: 'Art deleted successfully.' });
     });
 });
+// Insert Event
+app.post('/event/insert', (req, res) => {
+    const { Name, Date , Time,  StaffID,GalleryID } = req.body;
+    const query = 'INSERT INTO event (Name, Date,Time,  StaffID,GalleryID) VALUES (?, ,? , ? , ?, ?)';
+    pool.query(query, [Name, Date , Time,  StaffID,GalleryID], (error, results) => {
+        if (error) {
+            return res.status(500).json({ message: 'Error inserting event.', error: error.message });
+        }
+        res.status(201).json({ id: results.insertId });
+    });
+});
+
+// Update Event
+app.put('/event/update/:id', (req, res) => {
+    const { id } = req.params;
+    const { Name, Date , Time,  StaffID,GalleryID} = req.body;
+    const query = 'UPDATE event SET Name = ?, Date = ?, Time = ?, StaffID= ?, GalleryID = ?  WHERE EventID = ?';
+    pool.query(query, [Name, Date , Time,  StaffID,GalleryID], (error, results) => {
+        if (error) {
+            return res.status(500).json({ message: 'Error updating event.', error: error.message });
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ message: 'Event not found.' });
+        }
+        res.json({ message: 'Event updated successfully.' });
+    });
+});
+
+// Delete Event
+app.delete('/event/delete/:id', (req, res) => {
+    const { id } = req.params;
+    const query = 'DELETE FROM event WHERE EventID = ?';
+    pool.query(query, [id], (error, results) => {
+        if (error) {
+            return res.status(500).json({ message: 'Error deleting event.', error: error.message });
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ message: 'Event not found.' });
+        }
+        res.json({ message: 'Event deleted successfully.' });
+    });
+});
+
+// Insert Exhibit
+app.post('/exhibition/insert', (req, res) => {
+    const { name, StartDate, EndDate, GalleryID, Description } = req.body;
+    const query = 'INSERT INTO exhibition (Name, StartDate, EndDate, GalleryID, Description) VALUES (?, ?, ?, ?, ?)';
+    pool.query(query, [name, StartDate, EndDate], (error, results) => {
+        if (error) {
+            return res.status(500).json({ message: 'Error inserting exhibit.', error: error.message });
+        }
+        res.status(201).json({ id: results.insertId });
+    });
+});
+
+// Update Exhibit
+app.put('/exhibition/update/:id', (req, res) => {
+    const { id } = req.params;
+    const { name, StartDate, EndDate, GalleryID, Description } = req.body;
+    const query = 'UPDATE exhibition SET Name =?, StartDate= ? , EndDate = ? , GalleryID = ?, Description = ?  WHERE ExhibitID = ?';
+    pool.query(query, [name, StartDate, EndDate, GalleryID, Description], (error, results) => {
+        if (error) {
+            return res.status(500).json({ message: 'Error updating exhibit.', error: error.message });
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ message: 'Exhibit not found.' });
+        }
+        res.json({ message: 'Exhibit updated successfully.' });
+    });
+});
+
+// Delete Exhibit
+app.delete('/exhibition/delete/:id', (req, res) => {
+    const { id } = req.params;
+    const query = 'DELETE FROM exhibition WHERE ExhibitID = ?';
+    pool.query(query, [id], (error, results) => {
+        if (error) {
+            return res.status(500).json({ message: 'Error deleting exhibit.', error: error.message });
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ message: 'Exhibit not found.' });
+        }
+        res.json({ message: 'Exhibit deleted successfully.' });
+    });
+});
+
+// Insert Gallery
+app.post('/gallery/insert', (req, res) => {
+    const { Name, FloorNumber, Capacity } = req.body;
+    const query = 'INSERT INTO gallery (Name, FloorNumber, Capacity) VALUES (?, ?, ?)';
+    pool.query(query, [Name, FloorNumber, Capacity], (error, results) => {
+        if (error) {
+            return res.status(500).json({ message: 'Error inserting gallery.', error: error.message });
+        }
+        res.status(201).json({ id: results.insertId });
+    });
+});
+
+// Update Gallery
+app.put('/gallery/update/:id', (req, res) => {
+    const { id } = req.params;
+    const { name, FloorNumber, Capacity } = req.body;
+    const query = 'UPDATE gallery SET Name = ?, Location = ? WHERE GalleryID = ?';
+    pool.query(query, [name, FloorNumber, Capacity, id], (error, results) => {
+        if (error) {
+            return res.status(500).json({ message: 'Error updating gallery.', error: error.message });
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ message: 'Gallery not found.' });
+        }
+        res.json({ message: 'Gallery updated successfully.' });
+    });
+});
+
+// Delete Gallery
+app.delete('/gallery/delete/:id', (req, res) => {
+    const { id } = req.params;
+    const query = 'DELETE FROM gallery WHERE GalleryID = ?';
+    pool.query(query, [id], (error, results) => {
+        if (error) {
+            return res.status(500).json({ message: 'Error deleting gallery.', error: error.message });
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ message: 'Gallery not found.' });
+        }
+        res.json({ message: 'Gallery deleted successfully.' });
+    });
+});
 // Start the server
 app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+    console.log(`Server running at https://mofa14.azurewebsites.net on port ${port}`);
 });
