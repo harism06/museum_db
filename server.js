@@ -107,7 +107,7 @@ app.delete('/artwork/delete/:id', (req, res) => {
 app.post('/event/insert', (req, res) => {
     const { Name, Date , Time,  StaffID,GalleryID } = req.body;
     const query = 'INSERT INTO event (Name, Date,Time,  StaffID,GalleryID) VALUES (?, ,? , ? , ?, ?)';
-    pool.query(query, [Name, Date , Time,  StaffID,GalleryID], (error, results) => {
+    pool.query(query, [Name, Date , Time, GalleryID, description], (error, results) => {
         if (error) {
             return res.status(500).json({ message: 'Error inserting event.', error: error.message });
         }
@@ -120,7 +120,7 @@ app.put('/event/update/:id', (req, res) => {
     const { id } = req.params;
     const { Name, Date , Time,  StaffID,GalleryID} = req.body;
     const query = 'UPDATE event SET Name = ?, Date = ?, Time = ?, StaffID= ?, GalleryID = ?  WHERE EventID = ?';
-    pool.query(query, [Name, Date , Time,  StaffID,GalleryID], (error, results) => {
+    pool.query(query, [Name, Date , Time,GalleryID,description], (error, results) => {
         if (error) {
             return res.status(500).json({ message: 'Error updating event.', error: error.message });
         }
