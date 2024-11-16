@@ -134,6 +134,7 @@
       </div>
     </div>
       <script>
+          let baseURL = 'https://museum-db-2.onrender.com' || 'http://localhost:3000';
           // Insert Art
           document.getElementById('artForm').addEventListener('submit', async (e) => {
               e.preventDefault();
@@ -141,7 +142,7 @@
               const data = Object.fromEntries(formData.entries());
   
               try {
-                  const response = await fetch('https://mofa14.azurewebsites.net/art/insert', {
+                  const response = await fetch(`${baseURL}/art/insert`, {
                       method: 'POST',
                       headers: {
                           'Content-Type': 'application/json',
@@ -172,7 +173,7 @@
               };
   
               try {
-                  const response = await fetch(`https://mofa14.azurewebsites.net/art/update/${id}`, {
+                  const response = await fetch(`${baseURL}/art/update/${id}`, {
                       method: 'PUT',
                       headers: {
                           'Content-Type': 'application/json',
@@ -192,7 +193,7 @@
           async function deleteArt() {
               const id = document.getElementById('deleteId').value;
               try {
-                  const response = await fetch(`https://mofa14.azurewebsites.net/art/delete/${id}`, {
+                  const response = await fetch(`${baseURL}/art/delete/${id}`, {
                       method: 'DELETE',
                   });
   
