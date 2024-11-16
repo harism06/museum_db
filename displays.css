@@ -1,0 +1,42 @@
+h1 {
+    text-align: center; /* Centers the text horizontally */
+    font-size: 36px; /* Increases the font size */
+    font-weight: bold; /* Optional: Makes the text bold */
+    margin-bottom: 20px; /* Adds space below the heading */
+    color: #cfc311; /* Optional: Change text color */
+  }
+  .table-container {
+    width: 90%; /* Optional: You can adjust the width as needed */
+    max-width: 1200px; /* Set a max width if desired */
+    margin: 0 auto; /* Center the table horizontally */
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for a better look */
+  }
+  #artists-table {
+    width: 100%; /* Make the table take up full width of its container */
+    border-collapse: collapse; /* Remove space between cells */
+    table-layout: fixed; /* Ensure columns have a fixed layout */
+  }
+  #artists-table th {
+    padding: 12px 15px;
+    text-align: left; /* Align text to the left in headers */
+    background-color: #cfc311; /* Green background for header */
+    color: white;
+    font-size: 18px;
+  }
+  #artists-table td {
+    padding: 12px 15px;
+    text-align: left; /* Align text to the left in data cells */
+    font-size: 16px;
+    color: #cfc311;
+    border-bottom: 1px solid #ddd; /* Add a bottom border to create separation between rows */
+  }
+  #artists-table tr:hover {
+    background-color: #f5f5f5; /* Light gray background on hover */
+  }
+  .table-scrollable {
+    max-height: 500px;
+    overflow-y: auto; /* Scroll vertically if needed */
+  }
