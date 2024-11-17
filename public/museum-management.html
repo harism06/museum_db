@@ -1,14 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Memberships</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="home.css" />
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.11.1/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <title>Museum of Fine Arts</title>
+    <link rel="icon" href="images/logo.png" type="image/x-icon" />
     <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-900 text-gray-200 min-h-screen flex flex-col">
+    <style>
+        /* Overlay for background blur */
+        .modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          background: rgba(0, 0, 0, 0.5);
+          backdrop-filter: blur(8px);
+          z-index: 40;
+          display: none;
+        }
+      
+        /* Expanded card modal style */
+        .expanded-card-modal {
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 90%;
+          max-width: 800px;
+          max-height: 80vh;
+          overflow-y: auto;
+          background: #1f2937; /* Dark background */
+          padding: 20px;
+          border-radius: 10px;
+          z-index: 50;
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+          display: none;
+        }
+      
+        /* Carousel placeholder */
+        .carousel {
+          position: relative;
+          width: 100%;
+          height: 400px;
+          background: #333; /* Placeholder color */
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 16px;
+        }
+      
+        /* Carousel arrows */
+        .carousel-arrow {
+          color: #fff;
+          font-size: 24px;
+          cursor: pointer;
+          padding: 10px;
+        }
+      
+        /* Name and date styling */
+        .modal-name, .modal-date {
+          font-size: 1.5rem;
+          color: #fff;
+        }
+      
+        .modal-date {
+          font-size: 1rem;
+          color: #b0b0b0;
+          margin-bottom: 16px;
+        }
+      
+        /* Description and purchase button */
+        .modal-description {
+          color: #b0b0b0;
+          margin-top: 16px;
+          margin-bottom: 16px;
+        }
+      
+        .purchase-button {
+          display: inline-block;
+          background-color: #22c55e;
+          color: #fff;
+          padding: 10px 20px;
+          border-radius: 6px;
+          text-align: center;
+          font-weight: bold;
+          cursor: pointer;
+          transition: background 0.3s;
+        }
+      
+        .purchase-button:hover {
+          background-color: #16a34a;
+        }
+      
+        </style>
+  </head>
+
+  <body class="bg-gray-900 text-gray-200">
 <!-- Navigation Bar -->
 <div class="navbar bg-gray-800">
   <div class="navbar-start">
@@ -210,15 +301,70 @@
       </div>
     </div>
 
-    <!-- Main Content Section -->
-    <div class="container mx-auto p-6">
-        <div id="membership-container" class="overflow-x-auto">
-            <!-- The table will be inserted here by JavaScript -->
-        </div>
-    </div>
+      <!-- Main Content: Centered Dropdown and View Button -->
+  <div class="flex items-center justify-center p-20">
+    <div class="flex items-center gap-4 p-4 bg-gray-800 rounded-lg shadow-lg">
+      <!-- Dropdown for selecting category -->
+      <label for="category" class="text-lg font-semibold">View</label>
+      <select id="category" class="input input-bordered w-full max-w-xs bg-gray-700 text-white">
+        <option disabled selected>Select a Category</option>
+        <option value="store">Store</option>
+        <option value="exhibitions">Exhibitions</option>
+        <option value="artworks">Artworks</option>
+        <option value="artists">Artists</option>
+        <option value="events">Events</option>
+        <option value="galleries">Galleries</option>
+      </select>
 
-    <!-- JavaScript for the page -->
-    <script src="manage-members.js"></script>
+      <button id="view-button" class="btn btn-primary">View</button>
+      <button id="add-button" class="btn btn-primary bg-gray-299">Add</button>
+    </div>
+  </div>
+
+  <div id="container" class="flex justify-between items-start flex-wrap p-6 bg-gray-700 rounded-lg shadow-lg w-full max-w-7xl mx-auto mb-6">
+    <!-- Event cards will be dynamically appended here -->
+</div>
+
+  
+  
+    <!-- Footer -->
+    <footer class="p-10 bg-gray-800 text-gray-200 py-8">
+      <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between px-6">
+        <div class="mb-6 md:mb-0">
+          <h3 class="text-lg font-semibold mb-2">Address</h3>
+          <p>12345 Museum St.</p>
+          <p>Houston, Texas, 77004</p>
+        </div>
+        <div class="mb-6 md:mb-0">
+          <h3 class="text-lg font-semibold mb-2">Hours of Operation</h3>
+          <p>Monday - Friday</p>
+          <p>9:00am - 5:00pm</p>
+          <p>Closed on Weekends</p>
+        </div>
+        <div class="mb-6 md:mb-0">
+          <h3 class="text-lg font-semibold mb-2">Follow Us</h3>
+          <div class="flex space-x-4 mb-2">
+            <a href="https://www.facebook.com/mfah.org/" target="_blank">
+              <img src="images\facebook.png" class="w-8 h-8 hover:scale-105" />
+            </a>
+            <a href="https://www.instagram.com/mfahouston" target="_blank">
+              <img src="images/instagram.png" class="w-8 h-8 hover:scale-105" />
+            </a>
+          </div>
+          <p class="text-xs text-gray-500">
+            Icons by
+            <a href="https://www.flaticon.com/authors/freepik" target="_blank" class="underline">Freepik - Flaticon</a>
+          </p>
+        </div>
+      </div>
+      <div class="divider divider-neutral"></div>
+      <div class="text-center mt-4">
+        <p>Designed and Created by Team 14</p>
+      </div>
+    </footer>
+
+    <!-- Place the script tag just before the closing body tag -->
     <script src="shared.js"></script>
-</body>
+    <script src="museum-management.js"></script>
+  </body>
 </html>

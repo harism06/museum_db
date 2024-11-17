@@ -1,14 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Memberships</title>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.11.1/dist/full.min.css" rel="stylesheet" type="text/css" />
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.11.1/dist/full.min.css" rel="stylesheet" type="text/css" />
+  <title>Exhibitions and Events</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+  /* Overlay for background blur */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    z-index: 40;
+    display: none;
+  }
+
+  /* Expanded card modal style */
+  .expanded-card-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 800px;
+    max-height: 80vh;
+    overflow-y: auto;
+    background: #1f2937; /* Dark background */
+    padding: 20px;
+    border-radius: 10px;
+    z-index: 50;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    display: none;
+  }
+
+  /* Carousel placeholder */
+  .carousel {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    background: #333; /* Placeholder color */
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  /* Carousel arrows */
+  .carousel-arrow {
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 10px;
+  }
+
+  /* Name and date styling */
+  .modal-name, .modal-date {
+    font-size: 1.5rem;
+    color: #fff;
+  }
+
+  .modal-date {
+    font-size: 1rem;
+    color: #b0b0b0;
+    margin-bottom: 16px;
+  }
+
+  /* Description and purchase button */
+  .modal-description {
+    color: #b0b0b0;
+    margin-top: 16px;
+    margin-bottom: 16px;
+  }
+
+  .purchase-button {
+    display: inline-block;
+    background-color: #22c55e;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .purchase-button:hover {
+    background-color: #16a34a;
+  }
+
+  </style>
 </head>
 <body class="bg-gray-900 text-gray-200 min-h-screen flex flex-col">
+
 <!-- Navigation Bar -->
 <div class="navbar bg-gray-800">
   <div class="navbar-start">
@@ -45,7 +134,6 @@
       <li><a href="manage-members.html" id="add-membership-btn" class="text-xl hidden scroll-link">Manage Members</a></li>
       <li><a href="manage-employees.html" id="edit-employee-btn" class="text-xl hidden scroll-link">Manage Employees</a></li>
       <li><a href="museum-management.html" id="edit-museum-btn" class="text-xl hidden scroll-link">Manage Museum</a></li>
-      <li><a href="reports.html" id="view-reports-btn" class="text-xl hidden scroll-link">View Reports</a></li>
     </ul>
   </div>
   <div class="navbar-end flex items-center gap-4">
@@ -209,16 +297,174 @@
         </div>
       </div>
     </div>
-
-    <!-- Main Content Section -->
-    <div class="container mx-auto p-6">
-        <div id="membership-container" class="overflow-x-auto">
-            <!-- The table will be inserted here by JavaScript -->
+  <!-- Main Content -->
+  <main class="flex-grow">
+    <!-- Events Section -->
+    <section id="events" class="py-12">
+      <div class="container mx-auto text-center">
+        <h2 class="text-3xl font-bold text-white mb-6">Events</h2>
+        <div id="events-container" class="flex flex-wrap justify-center gap-4">
+          <!-- Event cards will be dynamically inserted here -->
         </div>
-    </div>
+      </div>
+    </section>
 
-    <!-- JavaScript for the page -->
-    <script src="manage-members.js"></script>
-    <script src="shared.js"></script>
+    <!-- Exhibitions Section -->
+    <section id="exhibitions" class="py-12">
+      <div class="container mx-auto text-center">
+        <h2 class="text-3xl font-bold text-white mb-6">Exhibitions</h2>
+        <div id="exhibitions-container" class="flex flex-wrap justify-center gap-4">
+          <!-- Exhibition cards will be dynamically inserted here -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Notification Box -->
+  <div id="notification-box" class="absolute top-16 right-4 w-80 bg-gray-600 text-white rounded-lg shadow-lg hidden overflow-y-auto max-h-96 z-50">
+    <div id="notification-list" class="p-4">
+      <!-- Notifications will be dynamically inserted here -->
+    </div>
+  </div>
+
+  <!-- Profile Overlay -->
+  <div id="overlay" class="absolute inset-0 bg-black bg-opacity-70 hidden z-40"></div>
+
+  <!-- Profile Menu -->
+  <div id="profile-menu" class="absolute top-0 right-0 w-96 h-full bg-gray-800 transform translate-x-full transition-transform hidden duration-300 z-50">
+    <div class="p-6">
+      <h2 class="text-2xl font-semibold mb-4">Profile Info</h2>
+      <div class="mb-4">
+        <label class="block text-sm font-medium">Visitor ID</label>
+        <input type="text" class="input input-bordered w-full bg-gray-700 text-white" id="visitor-id" disabled />
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium">Created At</label>
+        <input type="text" class="input input-bordered w-full bg-gray-700 text-white" id="created-at" disabled />
+      </div>
+      <div class="mb-4">
+        <label for="profile-name" class="block text-sm font-medium">Name</label>
+        <input type="text" id="profile-name" class="input input-bordered w-full bg-gray-700 text-white" />
+      </div>
+      <div class="mb-4">
+        <label for="profile-age" class="block text-sm font-medium">Age</label>
+        <input type="number" id="profile-age" class="input input-bordered w-full bg-gray-700 text-white" />
+      </div>
+      <div class="mb-4">
+        <label for="profile-birthdate" class="block text-sm font-medium">Birthdate</label>
+        <input type="date" id="profile-birthdate" class="input input-bordered w-full bg-gray-700 text-white" />
+      </div>
+      <div class="mb-4">
+        <label for="profile-email" class="block text-sm font-medium">Email</label>
+        <input type="email" id="profile-email" class="input input-bordered w-full bg-gray-700 text-white" />
+      </div>
+      <div class="mb-4">
+        <label for="profile-phone" class="block text-sm font-medium">Phone Number</label>
+        <input type="tel" id="profile-phone" class="input input-bordered w-full bg-gray-700 text-white" />
+      </div>
+      <button class="btn btn-primary w-full mb-4" onclick="saveProfileChanges()">Save Changes</button>
+      <button class="btn btn-outline w-full text-white border-white" onclick="signOut()">Sign Out</button>
+    </div>
+  </div>
+
+  <!-- Login Modal -->
+  <div id="login-modal" class="absolute hidden top-0 left-0 w-full h-full bg-black bg-opacity-70 z-50 flex items-center justify-center">
+    <div class="modal-box max-w-lg w-full bg-gray-800 p-6 rounded-md">
+      <div class="modal-header flex justify-between items-center">
+        <h2 id="modal-title" class="text-2xl font-semibold">Login</h2>
+        <button class="btn btn-sm btn-circle bg-gray-700 text-white" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body mt-4">
+        <!-- Login Form -->
+        <form id="login-form" class="space-y-4">
+          <div>
+            <label for="email" class="block text-sm font-medium">Email</label>
+            <input type="email" id="email" name="email" class="input input-bordered w-full bg-gray-700 text-white" required />
+          </div>
+          <div>
+            <label for="password" class="block text-sm font-medium">Password</label>
+            <input type="password" id="password" name="password" class="input input-bordered w-full bg-gray-700 text-white" required />
+          </div>
+          <div class="modal-action">
+            <button type="submit" class="btn btn-primary w-full">Login</button>
+          </div>
+        </form>
+        <div class="divider" id="form-divider">OR</div>
+        <button id="toggle-register-button" class="btn btn-outline w-full text-white border-white" onclick="showRegisterForm()">Register</button>
+      </div>
+      <div id="register-form" class="hidden mt-4">
+        <form class="space-y-4 mt-4">
+          <div>
+            <label for="name" class="block text-sm font-medium">Name</label>
+            <input type="text" id="name" name="name" class="input input-bordered w-full bg-gray-700 text-white" required />
+          </div>
+          <div>
+            <label for="age" class="block text-sm font-medium">Age</label>
+            <input type="number" id="age" name="age" class="input input-bordered w-full bg-gray-700 text-white" required />
+          </div>
+          <div>
+            <label for="birthdate" class="block text-sm font-medium">Birthdate</label>
+            <input type="date" id="birthdate" name="birthdate" class="input input-bordered w-full bg-gray-700 text-white" required />
+          </div>
+          <div>
+            <label for="phone" class="block text-sm font-medium">Phone Number</label>
+            <input type="tel" id="phone" name="phone" class="input input-bordered w-full bg-gray-700 text-white" required />
+          </div>
+          <div>
+            <label for="reg-email" class="block text-sm font-medium">Email</label>
+            <input type="email" id="reg-email" name="email" class="input input-bordered w-full bg-gray-700 text-white" required />
+          </div>
+          <div>
+            <label for="reg-password" class="block text-sm font-medium">Password</label>
+            <input type="password" id="reg-password" name="password" class="input input-bordered w-full bg-gray-700 text-white" required />
+          </div>
+          <div class="modal-action">
+            <button type="submit" class="btn btn-primary w-full">Register</button>
+          </div>
+        </form>
+        <div class="divider" id="register-login-divider">OR</div>
+        <button id="toggle-login-button" class="btn btn-outline w-full text-white border-white" onclick="showLoginForm()">Login</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="p-10 bg-gray-800 text-gray-200 py-8">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between px-6">
+      <div class="mb-6 md:mb-0">
+        <h3 class="text-lg font-semibold mb-2">Address</h3>
+        <p>12345 Museum St.</p>
+        <p>Houston, Texas, 77004</p>
+      </div>
+      <div class="mb-6 md:mb-0">
+        <h3 class="text-lg font-semibold mb-2">Hours of Operation</h3>
+        <p>Monday - Friday</p>
+        <p>9:00am - 5:00pm</p>
+        <p>Closed on Weekends</p>
+      </div>
+      <div class="mb-6 md:mb-0">
+        <h3 class="text-lg font-semibold mb-2">Follow Us</h3>
+        <div class="flex space-x-4 mb-2">
+          <a href="https://www.facebook.com/mfah.org/" target="_blank">
+            <img src="images/facebook.png" class="w-8 h-8 hover:scale-105" />
+          </a>
+          <a href="https://www.instagram.com/mfahouston" target="_blank">
+            <img src="images/instagram.png" class="w-8 h-8 hover:scale-105" />
+          </a>
+        </div>
+        <p class="text-xs text-gray-500">
+          Icons by
+          <a href="https://www.flaticon.com/authors/freepik" target="_blank" class="underline">Freepik - Flaticon</a>
+        </p>
+      </div>
+    </div>
+    <div class="divider divider-neutral"></div>
+    <div class="text-center mt-4">
+      <p>Designed and Created by Team 14</p>
+    </div>
+  </footer>
+
+  <script src="shared.js"></script>
+  <script src="exhibitions-events.js"></script>
 </body>
 </html>

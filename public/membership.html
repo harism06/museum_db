@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Memberships</title>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.11.1/dist/full.min.css" rel="stylesheet" type="text/css" />
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="membership.css" />
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.11.1/dist/full.min.css" rel="stylesheet" type="text/css" />
+  <title>Membership Options</title>
+  <link rel="icon" href="images/logo.png" type="image/x-icon" />
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-900 text-gray-200 min-h-screen flex flex-col">
+
+<body class="bg-gray-900 text-gray-200">
 <!-- Navigation Bar -->
 <div class="navbar bg-gray-800">
   <div class="navbar-start">
@@ -210,15 +212,97 @@
       </div>
     </div>
 
-    <!-- Main Content Section -->
-    <div class="container mx-auto p-6">
-        <div id="membership-container" class="overflow-x-auto">
-            <!-- The table will be inserted here by JavaScript -->
-        </div>
-    </div>
 
-    <!-- JavaScript for the page -->
-    <script src="manage-members.js"></script>
-    <script src="shared.js"></script>
+    <!--Main Content-->
+    <section class="py-12 px-4">
+      <div class="max-w-md mx-auto bg-gray-800 text-gray-200 p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-bold mb-4">Museum Membership</h2>
+        <p class="text-gray-400 mb-6">Flexible membership plans with unlimited general admission.</p>
+        
+        <!-- Benefits List -->
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold mb-2">Membership Benefits:</h3>
+          <ul class="list-disc pl-6 space-y-2 text-gray-300">
+            <li>7% discount on all items</li>
+            <li>Unlimited admission</li>
+            <li>Special discounts on select holidays</li>
+            <li>Up to two guest passes</li>
+          </ul>
+        </div>
+      
+        <!-- Duration Selector -->
+        <div class="mb-6">
+          <label for="membership-duration" class="block text-lg font-semibold text-gray-200 mb-2">Duration</label>
+          <div class="flex items-center justify-center bg-gray-700 rounded-lg p-4 space-x-4">
+            <button
+              class="px-4 py-2 bg-red-500 text-white rounded-lg font-bold text-lg hover:bg-red-600 focus:outline-none"
+              onclick="decrementDuration()"
+            >-</button>
+            <input
+              type="number"
+              id="membership-duration"
+              min="1"
+              max="12"
+              value="1"
+              class="w-20 text-center py-2 px-3 rounded bg-gray-900 text-white font-semibold outline-none focus:ring-2 focus:ring-blue-500"
+              readonly
+            />
+            <button
+              class="px-4 py-2 bg-green-500 text-white rounded-lg font-bold text-lg hover:bg-green-600 focus:outline-none"
+              onclick="incrementDuration()"
+            >+</button>
+            <span class="text-gray-300 text-lg ml-4">month(s)</span>
+          </div>
+        </div>
+      
+        <!-- Price and Add to Cart -->
+        <div class="mb-6">
+          <p class="text-lg font-semibold">Total Price: <span id="total-price" class="text-blue-400">$10</span></p>
+        </div>
+        <button
+          class="w-full py-3 bg-blue-500 hover:bg-blue-400 text-white font-bold text-lg rounded-lg"
+          onclick="addMembershipToCart()"
+        >Add to Cart</button>
+      </div>
+      
+    </section>
+    
+  <footer class="p-10 bg-gray-800 text-gray-200 py-8">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between px-6">
+      <div class="mb-6 md:mb-0">
+        <h3 class="text-lg font-semibold mb-2">Address</h3>
+        <p>12345 Museum St.</p>
+        <p>Houston, Texas, 77004</p>
+      </div>
+      <div class="mb-6 md:mb-0">
+        <h3 class="text-lg font-semibold mb-2">Hours of Operation</h3>
+        <p>Monday - Friday</p>
+        <p>9:00am - 5:00pm</p>
+        <p>Closed on Weekends</p>
+      </div>
+      <div class="mb-6 md:mb-0">
+        <h3 class="text-lg font-semibold mb-2">Follow Us</h3>
+        <div class="flex space-x-4 mb-2">
+          <a href="https://www.facebook.com/mfah.org/" target="_blank">
+            <img src="images/facebook.png" class="w-8 h-8 hover:scale-105" />
+          </a>
+          <a href="https://www.instagram.com/mfahouston" target="_blank">
+            <img src="images/instagram.png" class="w-8 h-8 hover:scale-105" />
+          </a>
+        </div>
+        <p class="text-xs text-gray-500">
+          Icons by
+          <a href="https://www.flaticon.com/authors/freepik" target="_blank" class="underline">Freepik - Flaticon</a>
+        </p>
+      </div>
+    </div>
+    <div class="divider divider-neutral"></div>
+    <div class="text-center mt-4">
+      <p>Designed and Created by Team 14</p>
+    </div>
+  </footer>
+
+  <script src="shared.js"></script>
+  <script src="membership-page.js"></script>
 </body>
 </html>
