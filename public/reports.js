@@ -1,4 +1,4 @@
-const baseURL = "http://localhost:3000"; // Update to your server's base URL
+const baseURL = "https://museum-db-2.onrender.com"; // Update to your server's base URL
 
 // Function to load the transactions report
 async function loadTransactionsReport() {

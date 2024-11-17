@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     checkAccessAndLoadData();
 });
 
-let baseURL = 'https://museum-db-2.onrender.com' || 'http://localhost:3000';
+let baseURL = 'https://museum-db-2.onrender.com';
 
 async function checkAccessAndLoadData() {
     const token = localStorage.getItem('authToken');

@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   filterCategory('all'); // Show all products by default
 });
 
-let baseURL = 'https://museum-db-2.onrender.com' || 'http://localhost:3000';
+let baseURL = 'https://museum-db-2.onrender.com';
 
 let expandedItemId, expandedItemName, expandedItemPrice;
 

@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchExhibitions();
 });
 
-let baseURL = 'https://museum-db-2.onrender.com' || 'http://localhost:3000';
+let baseURL = 'https://museum-db-2.onrender.com';
 
 function fetchEvents() {
     fetch(`${baseURL}/api/events`)

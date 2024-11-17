@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     loadCartItems();
     updateCartIconCount();
 });
-let baseUrl = 'https://museum-db-2.onrender.com' || 'http://localhost:3000';
+let baseUrl = 'https://museum-db-2.onrender.com';
 
 // Function to check login status and toggle profile button visibility
 async function checkProfileStatus() {

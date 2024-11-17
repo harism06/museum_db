@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     checkAccess(0);
 });
 
-const baseURL = 'https://museum-db-2.onrender.com' || 'http://localhost:3000';
+const baseURL = 'https://museum-db-2.onrender.com';
 
 async function checkAccess(requiredRole = 0, redirectURL = "home.html") {
     const token = localStorage.getItem('authToken');
