@@ -554,7 +554,6 @@ async function openCardModal(cardObject, cardType) {
     };
     
 
-    buttonsContainer.appendChild(saveButton);
     buttonsContainer.appendChild(removeButton);
 
     // Append fields and the buttons container to the modal
