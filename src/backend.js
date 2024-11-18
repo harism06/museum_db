@@ -1259,5 +1259,92 @@ router.get('/reports/museumItems', authenticateToken, async (req, res) => {
     }
 });
 
+router.get('/reports/demographics', async (req, res) => {
+    try {
+        // Parse query parameters for age thresholds with default values
+        const childAge = parseInt(req.query.childAge, 10) || 17;
+        const adultAge = parseInt(req.query.adultAge, 10) || 64;
+
+        // Dynamically construct the query with substituted values
+        const query = `
+            WITH Demographics AS (
+                SELECT 
+                    CASE 
+                        WHEN v.Age <= ${childAge} THEN 'Child'
+                        WHEN v.Age BETWEEN ${childAge + 1} AND ${adultAge} THEN 'Adult'
+                        ELSE 'Senior'
+                    END AS demographic,
+                    CASE 
+                        WHEN v.Age <= ${childAge} THEN CONCAT('0 to ', ${childAge})
+                        WHEN v.Age BETWEEN ${childAge + 1} AND ${adultAge} THEN CONCAT(${childAge + 1}, ' to ', ${adultAge})
+                        ELSE '65 and above'
+                    END AS age_range,
+                    COUNT(DISTINCT CASE 
+                        WHEN v.membership_start_date IS NOT NULL AND 
+                             (v.membership_end_date IS NULL OR v.membership_end_date > NOW()) 
+                        THEN v.VisitorID 
+                    END) AS active_members,
+                    COUNT(DISTINCT CASE 
+                        WHEN v.membership_start_date IS NULL OR 
+                             v.membership_end_date <= NOW() 
+                        THEN v.VisitorID 
+                    END) AS non_members
+                FROM 
+                    visitor v
+                GROUP BY 
+                    demographic, age_range
+            ),
+            TicketBreakdown AS (
+                SELECT 
+                    t.ticket_type,
+                    COALESCE(SUM(tt.quantity), 0) AS ticket_sales
+                FROM 
+                    (SELECT 'Adult' AS ticket_type
+                     UNION ALL SELECT 'Child'
+                     UNION ALL SELECT 'Senior') t
+                LEFT JOIN 
+                    tickets tt
+                ON 
+                    (t.ticket_type = tt.type OR 
+                     (t.ticket_type = 'Child' AND tt.type = 'Student')) -- Combine 'Child' and 'Student'
+                GROUP BY 
+                    t.ticket_type
+                ORDER BY 
+                    t.ticket_type
+            )
+            SELECT 
+                d.demographic, 
+                d.age_range, 
+                d.active_members, 
+                d.non_members, 
+                tb.ticket_sales
+            FROM 
+                Demographics d
+            LEFT JOIN 
+                TicketBreakdown tb 
+            ON 
+                d.demographic = tb.ticket_type;
+        `;
+
+        // Execute the query
+        db.query(query, (err, results) => {
+            if (err) {
+                console.error('Database query error:', err);
+                res.status(500).json({ message: 'Error fetching demographics report.' });
+                return;
+            }
+
+            // Send the results back to the client
+            res.status(200).json({
+                message: 'Demographics report fetched successfully.',
+                data: results
+            });
+        });
+    } catch (error) {
+        console.error('Error fetching demographics report:', error);
+        res.status(500).json({ message: 'Error fetching demographics report.' });
+    }
+});
+
 
 module.exports = router;

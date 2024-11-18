@@ -1,4 +1,53 @@
+document.addEventListener('DOMContentLoaded', async function () {
+  checkAccess(3);
+});
+
+async function checkAccess(requiredRole = 0, redirectURL = "home.html") {
+  const token = localStorage.getItem('authToken');
+
+  if (!token) {
+      alert('You must be logged in to access this page.');
+      window.location.href = redirectURL;
+      return false; // Ensure further code execution stops
+  }
+
+  try {
+      // Fetch the profile information to get the user's role
+      const profileResponse = await fetch(`${baseURL}/auth/profile`, {
+          method: 'GET',
+          headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+          }
+      });
+
+      const profileData = await profileResponse.json();
+
+      if (!profileResponse.ok) {
+          alert('Failed to retrieve profile information.');
+          window.location.href = redirectURL;
+          return false;
+      }
+
+      // Check if the user's role meets the required role level
+      if (profileData.role < requiredRole) {
+          alert('You do not have access to this page.');
+          window.location.href = redirectURL;
+          return false;
+      }
+
+      // Return true if access is granted
+      return true;
+  } catch (error) {
+      console.error('Error checking access:', error);
+      alert('An error occurred. Please try again later.');
+      window.location.href = redirectURL;
+      return false;
+  }
+}
+
 const baseURL = "https://museum-db-2.onrender.com"; // Update to your server's base URL
+
 
 // Function to load the transactions report
 async function loadTransactionsReport() {
@@ -268,17 +317,122 @@ function populateMuseumItemsData(reportData) {
         </div>`;
     reportContainer.innerHTML += summaryRow;
 }
+async function loadDemographicsReport() {
+  try {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      alert("You are not logged in.");
+      return;
+    }
+
+    const childAge = parseInt(document.getElementById("child-age-threshold").value, 10) || 17;
+    const adultAge = parseInt(document.getElementById("adult-age-threshold").value, 10) || 64;
+
+    if (childAge < 0 || adultAge < childAge) {
+      alert("Please enter valid age thresholds where Child Age < Adult Age and both are non-negative.");
+      return;
+    }
+
+    const queryParams = new URLSearchParams({ childAge, adultAge }).toString();
+    const apiUrl = `${baseURL}/reports/demographics?${queryParams}`;
+    const reportContainer = document.getElementById("report-columns");
+
+    reportContainer.innerHTML = "<p class='text-gray-400'>Loading...</p>";
+
+    const response = await fetch(apiUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      console.error("Failed to fetch the demographics report:", response.statusText);
+      alert(`Could not fetch the demographics report. Status: ${response.statusText}`);
+      return;
+    }
+
+    const data = await response.json();
+    populateDemographicsData(data.data || []);
+  } catch (error) {
+    console.error("Error loading demographics report:", error);
+    alert("An error occurred while loading the report.");
+  }
+}
+
+
+
+function populateDemographicsData(reportData) {
+  const reportContainer = document.getElementById("report-columns");
+  reportContainer.innerHTML = ""; // Clear existing data
+
+  if (reportData.length === 0) {
+    reportContainer.innerHTML = "<p class='text-gray-400'>No data available.</p>";
+    return;
+  }
+
+  // Create a header row
+  const headerRow = `
+    <div class="col-span-3 grid grid-cols-4 gap-2 font-semibold bg-gray-600 p-2 rounded">
+      <span>Age Group</span>
+      <span>Active Members</span>
+      <span>Non-Members</span>
+      <span>Ticket Sales</span>
+    </div>`;
+  reportContainer.innerHTML += headerRow;
+
+  // Initialize summary variables
+  let totalActiveMembers = 0;
+  let totalNonMembers = 0;
+  let totalTicketSales = 0;
+
+  // Populate data rows dynamically based on response keys
+  reportData.forEach((row, index) => {
+    console.log(`Row ${index + 1}:`, row); // Debugging log for each row
+
+    // Aggregate totals
+    totalActiveMembers += row.active_members || 0;
+    totalNonMembers += row.non_members || 0;
+    totalTicketSales += row.ticket_sales || 0;
+
+    // Add individual data row
+    const dataRow = `
+      <div class="col-span-3 grid grid-cols-4 gap-2 bg-gray-700 p-2 rounded hover:bg-gray-600">
+        <span>${row.demographic || "N/A"}</span>
+        <span>${row.active_members || 0}</span>
+        <span>${row.non_members || 0}</span>
+        <span>${row.ticket_sales || 0}</span>
+      </div>`;
+    reportContainer.innerHTML += dataRow;
+  });
+
+  // Add a summary row at the end
+  const summaryRow = `
+    <div class="col-span-3 grid grid-cols-4 gap-2 font-semibold bg-gray-600 p-2 rounded mt-4">
+      <span>Total</span>
+      <span>${totalActiveMembers}</span>
+      <span>${totalNonMembers}</span>
+      <span>${totalTicketSales}</span>
+    </div>`;
+  reportContainer.innerHTML += summaryRow;
+}
+
+
 
 function showFilters(reportType) {
   // Hide all filters initially
   document.getElementById("transaction-filters").classList.add("hidden");
   document.getElementById("museum-item-filters").classList.add("hidden");
+  document.getElementById("demographics-filters").classList.add("hidden");
 
   // Show the selected report type filters
   if (reportType === "transactions") {
     document.getElementById("transaction-filters").classList.remove("hidden");
   } else if (reportType === "museumItems") {
     document.getElementById("museum-item-filters").classList.remove("hidden");
+  } else if (reportType === "demographics") {
+    document.getElementById("demographics-filters").classList.remove("hidden");
   }
 }
-    
+ 
