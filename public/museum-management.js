@@ -349,18 +349,23 @@ function createGalleryCard(gallery) {
 
 
 
-function formatDate(dateString, timeString) {
+function formatDate(dateString, timeString = null) {
     // Format date
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     const date = new Date(dateString).toLocaleDateString(undefined, options);
 
-    // Format time
-    const time = new Date(`1970-01-01T${timeString}`).toLocaleTimeString(undefined, {
-        hour: 'numeric',
-        minute: '2-digit',
-    });
-
-    return `${date} at ${time}`;
+    // Check if a time string is provided
+    if (timeString) {
+        // Format time
+        const time = new Date(`1970-01-01T${timeString}`).toLocaleTimeString(undefined, {
+            hour: 'numeric',
+            minute: '2-digit',
+        });
+        return `${date} at ${time}`;
+    } else {
+        // Return only the date if time is not provided
+        return `${date}`;
+    }
 }
 
 async function openCardModal(cardObject, cardType) {
