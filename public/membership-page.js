@@ -57,4 +57,5 @@
     localStorage.setItem('cart', JSON.stringify(cart));
     alert('Membership added to cart!');
     console.log('Cart:', cart);
+    location.reload();
 }

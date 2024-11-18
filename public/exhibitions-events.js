@@ -130,8 +130,7 @@ function openCardModal(cardElement, descriptionId, fullDescription) {
     purchaseButton.textContent = 'Purchase Ticket';
     purchaseButton.onclick = () => {
         alert('Redirecting to ticket purchase page...');
-        // Optionally, redirect to a purchase page:
-        // window.location.href = '/purchase-ticket-page';
+        window.location.href = 'tickets.html';
     };
 
     // Append all elements to the modal container
