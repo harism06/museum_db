@@ -355,16 +355,16 @@ function formatDate(dateString, timeString = null) {
     const date = new Date(dateString).toLocaleDateString(undefined, options);
 
     // Check if a time string is provided
-    if (timeString) {
+    if (!timeString) {
         // Format time
+        return `${date}`;
+    } else {
+        // Return only the date if time is not provided
         const time = new Date(`1970-01-01T${timeString}`).toLocaleTimeString(undefined, {
             hour: 'numeric',
             minute: '2-digit',
         });
         return `${date} at ${time}`;
-    } else {
-        // Return only the date if time is not provided
-        return `${date}`;
     }
 }
 
