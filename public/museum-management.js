@@ -438,24 +438,6 @@ async function openCardModal(cardObject, cardType) {
     const buttonsContainer = document.createElement('div');
     buttonsContainer.className = 'buttons-container flex justify-between mt-4';
 
-    const saveButton = document.createElement('div');
-    saveButton.className = 'save-button';
-    saveButton.innerHTML = `
-        <button class="btn btn-primary w-full">Save Changes</button>
-    `;
-    saveButton.onclick = () => {
-        // Collect updated values from the modal input fields
-        const updatedName = document.getElementById('modal-name-input').value;
-        const updatedFloorNumber = document.getElementById('modal-floor-number-input') ? document.getElementById('modal-floor-number-input').value : null;
-        const updatedCapacity = document.getElementById('modal-capacity-input') ? document.getElementById('modal-capacity-input').value : null;
-
-        // Output for debugging
-        console.log('Updated:', updatedName, updatedFloorNumber, updatedCapacity);
-
-        // Call API to save the changes (replace with actual backend logic)
-        alert('Changes Saved!');
-        closeCardModal();
-    };
 
     const removeButton = document.createElement('div');
     removeButton.innerHTML = `
