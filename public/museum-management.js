@@ -225,7 +225,7 @@ function createEventCard(event) {
             <h3 class="text-lg font-bold text-white mb-1">${event.Name}</h3>
             <p class="text-sm text-gray-400 mb-2">${formatDate(event.Date, event.Time)}</p>
             <div class="flex justify-between mt-auto">
-                <button class="btn btn-outline text-sm w-full" onclick="openCardModal([${event.EventID}, '${event.Name}', '${event.Date}', '${event.Time}', '${event.description}'], 'event')">Edit</button>
+                <button class="btn btn-outline text-sm w-full" onclick="openCardModal([${event.EventID}, '${event.Name}', '${event.Date}', '${event.Time}', '${event.description}'], 'event')">View Details</button>
             </div>
         </div>
     `;
@@ -249,7 +249,7 @@ function createArtworkCard(artwork) {
             <p class="text-sm text-gray-400 mb-2">Value: $${artwork.Value}</p>
             <p class="text-sm text-gray-400 mb-2">Dimensions: ${artwork.Dimensions}</p>
             <div class="flex justify-between mt-auto">
-                <button class="btn btn-outline text-sm w-full" onclick="openCardModal([${artwork.ArtworkID}, '${artwork.Title}', '${artwork.YearCreated}', '${artwork.ArtistName}', '${artwork.Value}', '${artwork.Dimensions}'], 'artwork')">Edit</button>
+                <button class="btn btn-outline text-sm w-full" onclick="openCardModal([${artwork.ArtworkID}, '${artwork.Title}', '${artwork.YearCreated}', '${artwork.ArtistName}', '${artwork.Value}', '${artwork.Dimensions}'], 'artwork')">View Details</button>
             </div>
         </div>
     `;
@@ -272,7 +272,7 @@ function createArtistCard(artist) {
             <p class="text-sm text-gray-400 mb-2">Born: ${artist.BirthYear}</p>
             <p class="text-sm text-gray-400 mb-2">Country: ${artist.Country}</p>
             <div class="flex justify-between mt-auto">
-                <button class="btn btn-outline text-sm w-full" onclick="openCardModal([${artist.ArtistID}, '${artist.Name}', '${artist.BirthYear}', '${artist.Country}'], 'artist')">Edit</button>
+                <button class="btn btn-outline text-sm w-full" onclick="openCardModal([${artist.ArtistID}, '${artist.Name}', '${artist.BirthYear}', '${artist.Country}'], 'artist')">View Details</button>
             </div>
         </div>
     `;
@@ -295,7 +295,7 @@ function createStoreItemCard(storeItem) {
             <p class="text-sm text-gray-400 mb-2">Price: $${storeItem.price}</p>
             <p class="text-sm text-gray-400 mb-2">Category: ${storeItem.category}</p>
             <div class="flex justify-between mt-auto">
-                <button class="btn btn-outline text-sm w-full" onclick="openCardModal([${storeItem.id}, '${storeItem.name}', '${storeItem.description}', ${storeItem.price}, '${storeItem.category}'], 'storeitem')">Edit</button>
+                <button class="btn btn-outline text-sm w-full" onclick="openCardModal([${storeItem.id}, '${storeItem.name}', '${storeItem.description}', ${storeItem.price}, '${storeItem.category}'], 'storeitem')">View Details</button>
             </div>
         </div>
     `;
@@ -318,7 +318,7 @@ function createExhibitionCard(exhibition) {
             <h3 class="text-lg font-bold text-white mb-1">${exhibition.Name}</h3>
             <p class="text-sm text-gray-400 mb-2">${formatDate(exhibition.StartDate)} - ${formatDate(exhibition.EndDate)}</p>
             <div class="flex justify-between mt-auto">
-                <button class="btn btn-outline text-sm w-full" onclick="openCardModal([${exhibition.ExhibitionID}, '${exhibition.Name}', '${exhibition.StartDate}', '${exhibition.EndDate}', '${exhibition.Description}'], 'exhibition')">Edit</button>
+                <button class="btn btn-outline text-sm w-full" onclick="openCardModal([${exhibition.ExhibitionID}, '${exhibition.Name}', '${exhibition.StartDate}', '${exhibition.EndDate}', '${exhibition.Description}'], 'exhibition')">View Details</button>
             </div>
         </div>
     `;
@@ -339,7 +339,7 @@ function createGalleryCard(gallery) {
             <h3 class="text-lg font-bold text-white mb-1">${gallery.Name}</h3>
             <p class="text-sm text-gray-400 mb-2">Floor: ${gallery.FloorNumber}, Capacity: ${gallery.Capacity}</p>
             <div class="flex justify-between mt-auto">
-                <button class="btn btn-outline text-sm w-full" onclick="openCardModal([${gallery.GalleryID}, '${gallery.Name}', ${gallery.FloorNumber}, ${gallery.Capacity}], 'gallery')">Edit</button>
+                <button class="btn btn-outline text-sm w-full" onclick="openCardModal([${gallery.GalleryID}, '${gallery.Name}', ${gallery.FloorNumber}, ${gallery.Capacity}], 'gallery')">View Details</button>
             </div>
         </div>
     `;
